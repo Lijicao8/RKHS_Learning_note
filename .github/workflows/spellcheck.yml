@@ -1,0 +1,23 @@
+name: 拼写检查
+
+on:
+  push:             # 推送代码时触发
+  pull_request:     # 提交 PR 时触发
+
+jobs:
+  codespell:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 运行 codespell 检查拼写
+        uses: codespell-project/actions-codespell@v2
+        with:
+          check_filenames: true         # 也检查文件名里的拼写
+          skip: "build,*.pdf,*.png,*.jpg,*.jpeg,*.gif,*.svg"   # 跳过这些目录或文件类型
+          # 发现拼写错误时是否让工作流失败（默认失败）
+          # 若只提示、不失败，启用 only_warn
+          ignore_words_list: "te,nd,ot" # 忽略一些常见的假阳性（按需修改）
+          only_warn: true               # 只提示，不让工作流失败

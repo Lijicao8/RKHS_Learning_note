@@ -1,0 +1,582 @@
+\documentclass[12pt, a4paper, oneside]{ctexbook}
+\usepackage{amsmath, amsthm, amssymb, bm, graphicx, hyperref, mathrsfs}
+
+\usepackage{biblatex}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usepackage{listings} % 用于代码展示
+
+\addbibresource{ref.bib}
+\title{{\Huge{\textbf{RKHS学习笔记}}}}
+\author{李佶操 \\24212792}
+\linespread{1.5}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{example}[theorem]{例}
+\newtheorem{proposition}[theorem]{命题}
+
+\begin{document}
+
+\maketitle
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\pagenumbering{Roman}
+\setcounter{page}{1}
+\tableofcontents
+\newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\chapter{RKHS基础知识}
+\section{再生核 Hilbert 空间}
+本节中的Hilbert空间均指实Hilbert空间.对于复Hilbert空间，下面的对称需要变为共轭对称，其余推导相似.
+\begin{definition}[核函数]
+    设$X$是一个非空集合，称$X\times X$上的对称半正定函数$K:X\times X\to\mathbb{R}$为核函数.
+    其中，称$K$是\textbf{对称的}，若$K(x,y)=K(y,x),(\forall x,y\in X)$;称$K$是\textbf{半正定的}，若对任意的有限点集$S:=\{x_1,\dots,x_k\}$，
+    \begin{equation}\label{eq: Gram_matrix}
+        K[S]:=\begin{pmatrix}
+            K(x_1,x_1)&\cdots&K(x_1,x_k)\\
+            \vdots&\ddots&\vdots\\
+            K(x_k,x_1)&\cdots&K(x_k,x_k)
+        \end{pmatrix}
+    \end{equation}
+    都是半正定的.称式\eqref{eq: Gram_matrix}中的矩阵为$K$在集合$S$上的\textbf{Gram矩阵}.
+\end{definition}
+
+\begin{theorem}\label{thm:对称半正定K(xx)>0}
+    设$K$是集合$X$上的核函数，则对任意的$x,y\in X$，有
+    
+    （1）$K(x,x)\geq 0$;
+    
+    （2）$\left|K(x,y)\right|^2\leq K(x,x)K(y,y)$.
+\end{theorem}
+
+\begin{proof}
+    取$S:=\{x\}$，由$K[S]$的半正定性得（1）成立.取$S':=\{x,y\}$，由$K[S]$得半正定性得（2）成立.
+\end{proof}
+
+对任意给定$x\in X$，定义$K_x$:
+\begin{equation}\label{def:k_x}
+    \begin{aligned}
+K_x:X & \to\mathbb{R} \\
+t & \mapsto K(x,t).
+\end{aligned}
+\end{equation}
+
+下面我们给出再生核Hilbert空间的定义，并说明再生核Hilbert空间的再生核实际上是和某个核函数是一一对应的，因此再生核一定是对称半正定的.
+\begin{definition}[再生核Hilbert空间]\label{def:RKHS}
+    设$X$是一个非空集合，$\mathcal{H}$是一个Hilbert空间，其中每一个元素都是一个$X$上的实值函数. 若存在函数$K:X\times X\to\mathbb{R}$，满足以下条件：
+    \begin{enumerate}
+        \item $K_x\in\mathcal{H},\forall x\in X$;
+        \item $f(x)=\langle f,K_x\rangle,\forall f\in\mathcal{H}$.
+    \end{enumerate}
+    则称$\mathcal{H}$是集合$X$上的一个再生核Hilbert空间（简记为RKHS），并称$K$为其再生核.
+\end{definition}
+
+从以上定义中，我们可以看出可再生核Hilbert空间实际上是一种特殊的Hilbert空间，其中每个元素都是一个函数，并且这个函数在任意一点的函数值都可以由再生核去重构.除此之外，结合Riesz表示定理，我们可以得到以下判断Hilbert空间是RKHS的充分必要条件.
+
+\begin{theorem}
+    设$X$是一个非空集合，$\mathcal{H}$是一个Hilbert空间，其中每一个元素都是一个$X$上的实值函数，那么$\mathcal{H}$是一个RKHS当且仅当：$\forall x\in X,f\in\mathcal{H}$都有
+    \begin{equation*}
+        \delta_x:f\to f(x)
+    \end{equation*}
+    是$\mathcal{H}$上的一个有界线性泛函.
+\end{theorem}
+
+\begin{proof}
+    必要性. 设$\mathcal{H}$是一个RKHS，$K(x,y)$是其再生核，则对任意$f\in\mathcal{H},x\in X$，有：
+    \begin{align*}
+        |\delta_x(f)|&=|f(x)|=|\langle f,K_x\rangle| \leq \|f\|\|K_x\|，
+    \end{align*}
+    其中$\|\cdot\|$表示由内积诱导的范数.又因为
+    \begin{equation*}
+        \|K_x\|^2=\langle K_x,K_x\rangle =K(x,x)<\infty,
+    \end{equation*}
+    故$\delta_x\in\mathcal{H}^*$.
+
+    充分性. 对任意$x\in X$，因为$\delta_x\in\mathcal{H}^*$，根据Riesz表示定理可知，存在$K_x\in\mathcal{H}$，使得
+    \begin{equation*}
+        f(x)=\delta_x(f)=\langle f,K_x\rangle,~~\forall f\in\mathcal{H}.
+    \end{equation*} 
+    令$K(x,y):=K_x(y)(\forall y\in\mathcal{H})$，结合$x$的任意性，容易验证$K$满足定义\ref{def:RKHS}中的条件，因此$\mathcal{H}$是一个RKHS.
+\end{proof}
+
+
+下面我们将证明RKHS的再生核是唯一的，并且其再生核必是一个核函数.
+\begin{theorem}[RKHS决定再生核]
+    再生核Hilbert空间$\mathcal{H}$的再生核是唯一的，并且是一个核函数.
+\end{theorem}
+
+\begin{proof}
+    反证而设$K_1,K_2$都是$\mathcal{H}$的再生核，则对任意$x\in X$，有:
+    \begin{equation*}
+        \langle f,(K_1)_x-(K_2)_x\rangle=f(x)-f(x)=0,
+    \end{equation*}
+    由$f$的任意性可知，$(K_1)_x=(K_2)_x$.结合$x$的任意性得$K_1=K_2$.
+
+    对任意$y\in X$，因为 $K_y\in\mathcal{H}$，令$f:=K_y$，则有
+    \begin{equation*}
+        K(y,x)=\langle K_y,K_x\rangle=\langle K_x,K_y\rangle=K(x,y),~~\forall x\in X,
+    \end{equation*}
+    其中第二个等式是因为$\mathcal{H}$是实的Hilbert空间.因此$K$是对称的.
+
+    对任意$S=\{x_1,\dots,x_n\}$，以及$\boldsymbol{c}\in\mathbb{R}^n$，记$f:=\sum_{i=1}^n c_i K_{x_i}$，则有
+    \begin{equation*}
+        \boldsymbol{c}^\top K[S]\boldsymbol{c}=\sum_{i=1}^n\sum_{j=1}^nc_ic_jK(x_i,x_j)=\sum_{i=1}^n\sum_{j=1}^nc_ic_j\langle K_{x_i},K_{x_j}\rangle = \langle f,f\rangle\geq 0.
+    \end{equation*}
+    因此$K[S]$是半正定的. 所以$K$是核函数.
+\end{proof}
+
+前面说明了，一个RKHS的再生核存在唯一，并且是一个核函数. 那么反过来，一个核函数是否能诱导一个RKHS呢？这就是著名的 Moore-Aronszajn 定理.
+
+\begin{theorem}[Moore-Aronszajn]\label{thm:Moore-Aronszajn}
+    设 $X$ 是一个非空集合，$K:X\times X\to \mathbb{R}$是一个核函数，则存在$X$上唯一的再生核Hilbert空间以$K$作为再生核.
+\end{theorem}
+
+\begin{proof}
+    定义$\mathcal{H}_0:=\operatorname{span}\{K_x:x\in X\}$, 并定义其上的内积：
+    \begin{equation}
+        \langle f,g\rangle:=\sum_{i=1}^m\sum_{j=1}^na_ib_jK(x_i,y_j),\quad\forall f:=\sum_{i=1}^ma_iK_{x_i}, ~g:=\sum_{j=1}^nb_jK_{y_j}\in \mathcal{H}_0,
+    \end{equation}
+    其中$x_i,y_j\in X~(\forall i\in[m],~j\in [n])$.  
+
+    因为$K$是半正定的，因此存在$\Delta a_i,\Delta b_j~(i\in[m],~j\in[n])$使得
+    \begin{equation}
+        \sum_{i=1}^m\Delta a_i  K_{x_i}(z)=\sum_{j=1}^n\Delta b_j  K_{y_j}(z),~~\forall z\in X.
+    \end{equation}
+    故存在$f,g$的多种表示：
+    \begin{align*}
+        f&=\sum_{i=1}^ma_iK_{x_i}=\sum_{i=1}^m(a_i+\Delta a_i)K_{x_i},\\
+        g&=\sum_{j=1}^nb_j K_{y_j}=\sum_{j=1}^n(b_j+\Delta b_j)K_{y_j}.
+    \end{align*}
+
+    对以上的任意两种表示有：
+    \begin{align*}
+        &\sum_{i=1}^m\sum_{j=1}^n(a_i+\Delta a_i)(b_j+\Delta b_j)K(x_i,y_j)-\sum_{i=1}^m\sum_{j=1}^na_ib_jK(x_i,y_j)\\
+        &=\sum_{i=1}^ma_i\sum_{j=1}^n \Delta b_j K(x_i,y_j)+\sum_{j=1}^n b_j\sum_{i=1}^m\Delta a_i K(x_i,y_j)+\sum_{i=1}^m\Delta a_i\sum_{j=1}^n \Delta b_j K(x_i,y_j)\\
+        &=0.
+    \end{align*}
+因此$\langle f,g\rangle$与$f,g$的表示无关，因此是良定的.
+
+    显然$\langle\cdot,\cdot\rangle$满足对称性，双线性性以及$f=g$时的非负性.下面证明$\langle f,f\rangle=0$蕴含$f=0$.
+
+    任给$f\in \mathcal{H}_0$满足$\langle f,f\rangle=0$，只需证明$f(x)=0~(\forall x\in X)$. 设$f=\sum_{i=1}^m a_i K_{x_i}$，其中$a_i\in\mathbb{R},~x_i\in X,~i=1,\dots,n.$
+
+    考虑$S=\{x_1,\dots,x_m\}\cup \{x\}$，由$K[S]$的半正定性，对任意的$\epsilon>0$，有：
+    \begin{equation*}
+        \sum_{i=1}^m\sum_{j=1}^m a_i a_j K(x_i,x_j)+2\sum_{i=1}^m a_iK(x_i,x)\epsilon+\epsilon^2K(x,x)\geq 0 .
+    \end{equation*}
+
+    又因为$\sum_{i=1}^m\sum_{j=1}^m a_i a_j K(x_i,x_j)=\langle f,f\rangle =0$，取$\epsilon$充分小有
+    $$f(x)=\sum_{i=1}^m a_iK(x_i,x)=0.$$
+    由$x$的任意性，得$f=0$. 所以$\langle f,g \rangle$是$\mathcal{H}_0$上内积. 设$\mathcal{H}$为$\mathcal{H}_0$ 上的完备化空间(内积诱导范数意义下).但值得小心的是，$\mathcal{H}$作为$\mathcal{H}_0$的完备化空间，其中的点$f$不一定是定义在$X$上的函数，因此$\mathcal{H}$并不是我们所要找的再生核Hilbert空间.但是我们将说明，他们是等距同构的.
+
+    对任意的$f\in\mathcal{H}$，令$\phi_f(x):=\langle f,K_x\rangle,~(\forall x\in X)$. 对任意$f,g\in\mathcal{H}$满足$\phi_f(x)=\phi_g(x),~(\forall x\in X)$, 则$\langle f-g,K_x\rangle=0$. 因此存在$h_k\in\mathcal{H}_0,h_k\to f-g$，使得$\langle f-g,  h_k\rangle=0$，因此$f-g=0$，即$f\to \phi_f$是一一对应的，即我们可以将$\mathcal{H}$中的点看作$X$上的一个函数.记$\widetilde{\mathcal{H}}:=\{\phi_f:f\in\mathcal{H}\}$，并定义其上的线性运算和内积：
+    \begin{equation*}
+        \phi_{f}+\phi_{g}:=\phi_{f+g},\quad\lambda\phi_{f}:=\phi_{\lambda f},\quad\langle\phi_{f},\phi_{g}\rangle_{\widetilde{\mathcal{H}}}:=\langle f,g\rangle,\quad\forall f,g\in \mathcal{H},\quad\lambda\in\mathbb{R}.
+    \end{equation*}
+    显然$T:f\to\phi_f$是映$\mathcal{H}$到$\widetilde{\mathcal{H}}$的一个等距同构，满足
+    \begin{equation*}
+        \phi_{f}=f,\forall f\in \mathcal{H}_{0},\quad\quad\langle\phi_{f},K_x\rangle_{\widetilde{\mathcal{H}}}=\langle f,K_x\rangle=\phi_{f}(x),~~\forall f\in \mathcal{H}.
+    \end{equation*}
+因此$\widetilde{\mathcal{H}}$是以$K$为核的Hilbert空间.
+
+最后证其唯一性.反证而设$\mathcal{H},\mathcal{G}$都是以$K$为核的Hilbert空间，由再生核等式有
+\begin{equation*}
+    \langle K_x,K_y\rangle_{\mathcal{H}}=K(x,y)=\langle K_x,K_y\rangle_{\mathcal{G}}
+\end{equation*}
+结合内积的双线性性可知，对任意$f,g\in \mathcal{H}_0$有
+\begin{equation*}
+    \langle f,g\rangle_{\mathcal{H}}=\langle f,g\rangle_{\mathcal{G}}
+\end{equation*}
+因此$\mathcal{H}_0\subset \mathcal{G}$，结合$\mathcal{G}$的完备性有$\mathcal{H}$是$\mathcal{G}$的闭子空间. 由正交分解定理可知$\mathcal{G}=\mathcal{H}\oplus\mathcal{H}^{\perp}$. 任取$f\in\mathcal{H}^\perp$，有
+\begin{equation*}
+    f(x)=\langle f,K_x\rangle_{\mathcal{G}}=0,~~\forall x\in X.
+\end{equation*}
+因此$\mathcal{H}^{\perp}=\{0\}$，即$\mathcal{G}=\mathcal{H}$. 唯一性获证.
+\end{proof}
+
+\textbf{注：}通常记以$K$为核的Hilbert空间为$\mathcal{H_K}$.
+
+从上面的叙述中，我们可以看到再生核Hilbert空间和函数$K_x$息息相关，现在，我们将$K_x$的定义推广到更一般的情形，即$K_x$不再是一个函数，而是落在一个Hilbert空间中的一个元素. 称$\Phi:X\to\mathcal{H}$为$X$上的特征映射，其中$\mathcal{H}$是一个实的Hilbert空间. 令$K(x,y):=\langle \Phi(x),\Phi(y)\rangle$，显然$K(x,y)$是一个核函数，由 Moore-Aronszajn 定理\ref{thm:Moore-Aronszajn}可知 $K$诱导了一个以其为核的Hilbert空间$\mathcal{H_K}$. 一般而言，$\mathcal{H}$和$\mathcal{H_K}$是不同的，实际上，$\mathcal{H_K}$是$X$上某些函数的集合, 但$\mathcal{H}$未必是. 而下面的定理说明$\mathcal{H_K}$和$\mathcal{H}$的一个子空间是等距同构的.
+
+\begin{theorem}
+    给定非空集合$X$,实Hilbert空间$\mathcal{H}$以及映射$\Phi:X\to \mathcal{H}.$设$\mathcal{H}_\mathrm{\Phi}$是$\mathcal{H}_{0}:=\operatorname{span}\{\Phi(x)|x\in X\}$在$\mathcal{H}$中的完备化空间.又设$K$是$\Phi$的核函数，那么，存在等距同构$T:\mathcal{H}_\Phi\to\mathcal{H_K}$,使得$T\Phi ( x) = K_x$, $\forall x\in X.$
+\end{theorem}
+
+\begin{proof}
+    考虑映射$T:\mathcal{H}_0\to\mathcal{H_K}$:
+    \begin{equation*}
+        \sum_{i=1}^m c_i\Phi(x_i)\mapsto\sum_{i=1}^mc_iK_{x_i}
+    \end{equation*}
+    其中$x_i\in X$, $c_i\in \mathbb{R}$, $i= 1, \dots , m.$根据核函数和 RKHS 的定义，我们有
+$$\left\|\sum_{i=1}^{m}c_{i}K_{x_{i}}\right\|_{\mathcal{H_K}}^{2}=\sum_{i=1}^{m}\sum_{j=1}^{m}c_{i}c_{j}K(x_{i},x_{j})=\sum_{i=1}^{m}\sum_{j=1}^{m}c_{i}c_{j}\langle\Phi(x_{i}),\Phi(x_{j})\rangle_{\mathcal{H}}=\left\|\sum_{i=1}^{m}c_{i}\Phi(x_{i})\right\|_{\mathcal{H}}^{2}.$$
+
+所以$\sum_{i=1}^{m}c_{i}K_{x_{i}}=0$ 当且仅当$\sum_{i=1}^{m}c_{i}\Phi(x_{i})=0.$ 这说明$T$是单射，并且$T$是等距线性映射.分别将$\mathcal{H}_0$和 $\operatorname{span}\{K_x|x\in X\}$完备化，得到 Hilbert 空间$\mathcal{H}_\Phi$和$\mathcal{H_K}.$显然$T$可以唯一地推广到$\mathcal{H}_\Phi$上，使得$T:H_\Phi\to\mathcal{H_K}$ 是一个等距同构.易见，$T\Phi ( x) = K_x$, $\forall x\in X.$
+
+\end{proof}
+\textbf{注：} 这里的$\operatorname{span}\{K_x|x\in X\}$完备化后并不是$\mathcal{H_K}$，实际上是一个与$\mathcal{H_k}$同构的Hilbert空间.但是根据同构的复合运算，上述证明依然合理.
+
+
+\section{Mercer 核情形的再生核Hilbert空间}
+以$K:X\times X \to \mathbb{R}$为再生核的Hilbert空间$\mathcal{H_K}$是$X$上一些函数的集合，我们自然的希望将$\mathcal{H_K}$嵌入到某个熟知的Hilbert空间中，并且这个空间中的元素也是$X$上的函数.一个自然的选择是实的$L^2(X,\mu)$，这就需要对$X$赋予一个测度结构，才能定义其上的可测函数以及积分. 我们设$X$是一个距离空间，$\mu$是定义在$X$的Borel集上的一个Borel 测度.
+
+\textbf{注：} $X$是距离空间就自然地定义了其上的拓扑结构，因此这里的Borel集是指这个由距离诱导的拓扑，其全体开集构成的$\sigma$代数的元素.即任意开集、闭集的任意交并. 因此简单函数、连续函数显然都是Borel可测函数.
+
+
+在再生核Hilbert空间理论中我们通常假设$\mu$是$X$上有限的，即$\mu(X)<\infty$. 此外，我们用$\operatorname{supp} \mu$表示$\mu$的支集，其定义为：
+\begin{equation*}
+    \mathrm{supp}\mu:=\{x\in X|\mu(B(x,\epsilon))>0,\forall\epsilon>0\}，
+\end{equation*}
+对于Lebesgue测度$\lambda$，显然$\operatorname{supp}\lambda=X$.
+\begin{example}
+    Dirac 测度（Dirac measure）是在可测空间 $(X, \mathcal{F})$ 上以某个点 $x_0 \in X$ 为“全部质量”的概率测度，记作 $\delta_{x_0}$，定义为
+$$\delta_{x_0}(A) = \begin{cases}
+1, & x_0 \in A, \\
+0, & x_0 \notin A,
+\end{cases} \quad A \in \mathcal{F}.$$
+
+则$\operatorname{supp}\delta_{x_0}=\{x_0\}.$
+\end{example}
+
+为了使$K_x\in L^2(X,\mu)$，我们通常假设$X$是紧的，并且$K$是连续的，这就是Mercer核的定义：
+\begin{definition}
+    设$X$是一个紧的距离空间，$K:X\times X\to\mathbb{R}$是一个对称半正定函数，若$K$是连续的，则称之为$X$上一个Mercer核.
+\end{definition}
+
+
+下面均考虑$X$是一个紧的距离空间, $\mu$是$X$上一个有限的Borel测度.$K:X\times X\to\mathbb{R}$是对称的连续函数.令$T_K$表示由核$K(x,y)$诱导的积分算子，即
+\begin{equation*}
+    T_Kf(x):=\int_X f(y)K(x,y)\mathrm{d}\mu(y),\quad f\in L^2(X,\mu)
+\end{equation*}
+下断言$T_Kf\in L^2(X,\mu)$.
+
+因为$X$紧，故$X\times X$紧，结合$K$的连续性，有$\operatorname{Im}(K)$紧，因此有界. 固有
+\begin{equation*}
+    \left|T_Kf(x)\right|\leq \|f\|_2\left(\int_X |K(x,y)|^2\mathrm{d}\mu(y)\right)^{1/2}\leq \|f\|_2\|K\|_\infty \mu(X).
+\end{equation*}
+结合$\mu(X)<\infty$，有$T_Kf\in L^2(X,\mu)$.
+
+除此之外，算子$T_K$还是紧的自伴算子，即$\langle T_Kf,f\rangle=\langle f,T_Kf\rangle$. 紧性由Arzelà–Ascoli 定理即可得到，而自伴性由$K$的对称性即可得到.而下面的定理将说明对于Mercer核而言，积分算子的半正定性，即$\langle T_Kf,f\rangle\geq 0~(\forall f\in L^2(X,\mu))$，可由积分核$K$的半正定性得到.
+\begin{theorem}[基于Mercer核的积分算子的半正定性]\label{thm:基于Mercer核的积分算子的半正定性}
+    设 $X$ 是一个紧的距离空间, $\mu$ 是 $X$ 上一个有限的 Borel 测度, $K: X \times X \to \mathbb{R}$ 是一个连续的对称函数, 那么
+
+(1) 若 $K$ 是半正定函数, 则$T_K$是半正定的，即
+\begin{equation}\label{eq:正定的必要条件}
+    \int_X \int_X f(x)f(y)K(x,y)d\mu(x)d\mu(y) \geq 0, \quad \forall f \in L^2(X,\mu).
+\end{equation}
+
+(2) 反之, 若式\eqref{eq:正定的必要条件}成立, 且 $\text{supp}\mu = X$, 则 $K$ 是半正定函数.
+\end{theorem}
+\begin{proof}
+    (1) 因为$K$在紧集$X\times X$上连续，因此一致连续，即对任意$\epsilon>0$，存在$\delta>0$，当$|x_1-x_2|^2+|y_1-y_2|^2\leq 2\delta^2$时，有
+    \begin{equation*}
+        |K(x_1,y_1)-K(x_2,y_2)|<\epsilon.
+    \end{equation*}
+    
+    又因为$X$紧，所以$M$是完全有界的，于是对上述$\delta$存在有穷$\delta-$网$\{x_1,\dots,x_n\}$, 即$X\subset\bigcup _{i=1}^n B(x_i,\delta)$.记
+    \begin{equation*}
+        E_1:=B(x_1,\delta),\quad E_i:=B(x_i,\delta)\setminus\bigcup_{j=1}^{i-1}B(x_j,\delta),\quad i=2,\cdots,n.
+    \end{equation*}
+    易见$\{E_i\}_{i=1}^n$是互不相交的 Borel 集，且$X=\bigcup_{i=1}^nE_i.$于是对任意$f\in L^2(X,\mu)$,有
+    \begin{equation*}
+\int_X\int_Xf(x)f(y)K(x,y)\mathrm{d}\mu(x)\mathrm{d}\mu(y)=\sum_{i=1}^n\sum_{j=1}^n\int_{E_i}\int_{E_j}f(x)f(y)K(x,y)\mathrm{d}\mu(x)\mathrm{d}\mu(y).
+    \end{equation*}
+    将$K(x,y)=K(x_{i},y_{j})-[K(x,y)-K(x_{i},y_{j})]$代入上式，得
+
+$$\int_X\int_Xf(x)f(y)K(x,y)\mathrm{d}\mu(x)\mathrm{d}\mu(y)\geq\sum_{i=1}^n\sum_{j=1}^nK(x_i,x_j)c_ic_j-\epsilon\Big(\int_X|f(x)|\mathrm{d}\mu(x)\Big)^2.$$
+
+其中
+
+$$c_i:=\int_{E_i}f(x)\mathrm{d}\mu(x),\quad i=1,\cdots,n.$$
+
+由$K(x,y)$的正定性可知上式第一项非负.而对于第二项，由于$\mu(X)<\infty$,所以
+$f\in L^{2}(X,\mu)\subset L^{1}(X,\mu)$,因而其当$\epsilon\to0$时，趋于0.由$\epsilon$的任意性，可知\eqref{eq:正定的必要条件}成立.
+
+（2）设\eqref{eq:正定的必要条件}成立. 任取 $X$ 是 $n$ 个不同的点 $x_1,\dots,x_n$, 取$ \delta'\in (0,\delta)$, 使得球 $\{B(x_i, \delta')\}^{n}_{i=1}$ 互不相交.由$\operatorname{supp}\mu=X$ 可知$\mu(B(x_i,\delta'))>0~(\forall i\in[n])$.对任意$c_1,\dots, c_n \in \mathbb{R},$ 作函数
+$$f(x) := \sum^{n}_{i=1} \frac{c_i}{\mu(B(x_i, \delta'))} \mathcal{X}_{B(x_i, \delta')}.$$
+其中$\mathcal{X}$表示集合的示性函数. 由于 $f$ 是 $X$ 上简单函数, 故 Borel 可测. 代入\eqref{eq:正定的必要条件}得
+\begin{equation}\label{eq:微分中值定理}
+    \sum^{n}_{i=1} \sum^{n}_{j=1} \frac{c_i}{\mu(B(x_i, \delta'))} \frac{c_j}{\mu(B(x_j, \delta'))} \int_{B(x_i, \delta')} \int_{B(x_j, \delta')} K(x, y) \mathrm{d}μ(x) \mathrm{d}μ(y) \geq  0.
+\end{equation}
+同理,将$K(x,y)=K(x_{i},y_{j})-[K(x,y)-K(x_{i},y_{j})]$代入上式，结合$K$的连续性，得
+\begin{equation}\label{eq: K的半正定性转}
+    \sum^{n}_{i=1} \sum^{n}_{j=1} c_ic_jK(x_i,x_j) \geq  \epsilon.
+\end{equation}
+由$\epsilon$的任意性得$K$是半正定的.
+
+\end{proof}
+
+\textbf{注：}式\eqref{eq: K的半正定性转}不能由式\eqref{eq:微分中值定理}结合Lebesgue微分中值定理直接得到，因为对于Lebesgue 微分中值定理依赖于Vitali 覆盖性质，但是对于一般的Borel测度，vitali性质不一定满足. 而对于该定理，完全可以绕过微分中值定理，利用$K$的连续性即可.
+
+下面，我们将介绍由Mercer核诱导的再生核 Hilbert 空间$\mathcal{H_K}$的嵌入定理.
+\begin{theorem}
+    设$K$是$X$上一个 Mercer 核，$\mu$是$X$上有限的Borel测度，则
+    
+(1)恒同映射$I_K:\mathcal{H_K}\to C(X)$是连续的，且$\|I_K\|\leq C_K$,其中$C_K:=\sup_{x\in X}\sqrt{K(x,x)}.$
+
+(2)恒同映射$I_\mu:C(X)\to L^2(X,\mu)$是连续的，且$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}.$
+\end{theorem}
+
+\begin{proof}
+    记 $C_K := \sup_{x \in X} \sqrt{K(x, x)}$. 那么, $\forall f \in \mathcal{H}_0 := \text{span}\{K_x | x \in X\}$, 易见 $f \in C(X)$. 由于 $f(x) = \langle f, K_x  \rangle$, 且 $\|K_x\|_{\mathcal{H_K}}^2 = \langle K_x, K_x \rangle = K(x, x) \leq C_K^2$, 我们有
+$$|f(x)| \leq \|f\|_{\mathcal{H_K}} \|K_x\|_{\mathcal{H_K}} \leq C_K \|f\|_{\mathcal{H_K}}.$$
+即$\|f\|_{C(X)}\leq C_K\|f\|_{\mathcal{H_K}}$.显然$\mathcal{H}_0$的完备化空间仍是$C(X)$的子空间，且$\|f\|_C(X)\leq$
+$C_{K}\|f\|_{\mathcal{H}_{K}}$对$f\in\mathcal{H}_{K}$仍成立.故(1)成立.
+
+对任意的$f\in C(X)$,显然有
+
+$$\int_X|f(x)|^2d\mu(x)\leq\|f\|_{C(X)}^2\mu(X).$$
+故$f\in L^2(X,\mu)$,且恒同映射$I_\mu:C(X)\to L^2(X,\mu)$满足$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}$.所以（2）成立.
+\end{proof}
+
+
+进一步，我们希望了解$\mathcal{H_K}$是$L^2(X,\mu)$的一个怎样的子空间，它等于$L^2(X,\mu)$吗？ 在$L^2(X,\mu)$中稠密吗？是有限维子空间吗？为了研究这些问题，我们需要取$L^2(X,\mu)$的一个规范正交基$\{\phi_j\}_{j\in J}$.对于紧距离空间$X$和有限测度$\mu$,下面我们将说明$L^2(X,\mu)$可分，因此存在可数的规范正交基.
+
+\begin{lemma}[\cite{Cohn2013MeasureTheory2}命题3.4.5]
+    Let $(X,\mathcal{A},\mu)$ be a measure space, and let $p$ satisfy $1 \leq p < +\infty$. If $\mu$ is $\sigma$-finite and $\mathcal{A}$ is countably generated, 
+then $L^p(X,\mathcal{A},\mu)$ is separable.
+\end{lemma}
+
+要说明$L^2$是可分的，下面我们只需要证明$\mu$是可数生成的即可.事实上$X$是紧的，因而是完全有界的，因此对任意的$n\in \mathbb{N}_+$，存在有穷的$x_{k_n},k_n\in [N_n]$，使得
+\begin{equation*}
+    X\subset \bigcup_{k_n=1}^{N_n} B(x_{k_n},\frac 1n).
+\end{equation*}
+令$D:=\{x_{k_n},n\in \mathbb{N}_+,k_n\in[N_n]\}$，是$X$的可数稠密子集.
+
+令
+\begin{equation*}
+    \mathcal{B}:=\{B(x,r):x\in D,r\in\mathbb{R}\cap (0,\infty)\},
+\end{equation*}
+显然$\mathcal{B}$是可数集，下断言它是$X$的拓扑基.
+
+对于任意的$x\in X$，以及包含$x$的开集$U$. 故存在有理数$r_0$充分小，使得$B(x,r_0)\subset U$.取充分大的$n_0$满足：$\frac{1}{n_0}\leq \frac{r_0}{3}$，故存在$x_1\in D$，使得$d(x,x_1)\leq \frac{r_0}{3}$.故任意$y\in B(x_1,\frac{r_0}{3})\in\mathcal{B}$，$d(x,y)\leq d(x,x_1)+d(x_1,y)<r_0.$即$B(x_1,\frac{r_0}{3})\subset U$. 因此$\mathcal{B}$是$X$的拓扑基.
+
+由于 $\mu$ 的可测集合由 $X$ 上的开集生成，而 $\mathcal{B}$ 又生成所有开集，故 $\mu$ 的 $\sigma$-代数由可数族 $\mathcal{B}$ 生成，即 $\mu$ 是可数生成的.由引理可知，$L^2(X,\mu)$ 是可分的.
+
+因此，$L^2(X,\mu)$ 中存在一个可数稠密子集.对该稠密子集应用 Gram--Schmidt 正交化过程，即可得到一组可数的规范正交基,记为$\{\phi_j\}_{j\in J}$.故任意$x\in X$，有$K_x\in L^2(X,\mu)$，因此
+\begin{equation*}
+    K_x=\sum_{j\in J} \langle K_x,\phi_j\rangle_{L^2}\phi_{j}
+\end{equation*}
+注意这里的等号是在$L^2$范数意义下成立. 而不是逐点收敛.
+
+
+根据前面的分析，我们已经知道对于mercer核诱导的算子$T_K$是自伴半正定的紧算子.除此之外，不严谨的有
+
+\begin{equation*}
+    K(x,y)=\sum_{j\in J}\langle K_x,\phi_j\rangle_{L^2} \phi_j(y)=\sum_{j\in J}T_K(\phi_j)(x)\phi_j(y)=T_K\left(\sum_{j\in J}\phi_j(y) \phi_j\right)(x).
+\end{equation*}
+即$K_y=T_K\left(\sum_{j\in J}\phi_j(y) \phi_j\right),$ 从而$\mathcal{H_K}\subset T_K\left(L^2(X,\mu)\right)$.
+
+
+下面我们将严谨的证明$\mathcal{H_K}= T_K\left(L^2(X,\mu)\right)$. 为了研究方便，我们取$T_K$的一组特征向量作为$L^2(X,\mu)$的规范正交基,即存在$\{\phi_j\}_{j\in J}$是$L^2(X,\mu)$的一组规范正交基，满足
+
+$$T_K\phi_j=\lambda_j\phi_j,\quad j\in J,$$
+其中 $J$ 是有限集或 $J=\mathbb{N}_+,\lambda_1\geq\lambda_2\geq\cdots,$且当$J=\mathbb{N}_+$时,有 $\lambda_j\to0~(j\to\infty).$
+
+下面，我们将证明著名的Mercer定理，借助此定理，可以证明$\mathcal{H_K}= T_K\left(L^2(X,\mu)\right)$，我们先给出以下几个引理.
+\begin{lemma}[$L^2$意义下相等的等价性]\label{lemma: L2中等价性}
+    设 $(X,\mathcal{A},\mu)$ 为测度空间，$f,g\in L^2(X,\mu)$.则以下两条等价：
+\begin{enumerate}
+    \item $\|f-g\|_{L^2}=0$（即 $f=g$ 在 $L^2$ 意义下，亦即几乎处处相等）；
+    \item 对任意 $h\in L^2(X,\mu)$，都有
+    \[
+        \langle f,h\rangle=\langle g,h\rangle,
+    \]
+    其中 $\langle u,v\rangle:=\int_X u\,\overline{v}\,d\mu$ 为 $L^2$ 的内积.
+\end{enumerate}
+
+\end{lemma}
+\begin{proof}
+(1)$\Rightarrow$(2)：
+由柯西–施瓦茨不等式，
+\[
+\big|\langle f,h\rangle-\langle g,h\rangle\big|
+=\big|\langle f-g,h\rangle\big|
+\le \|f-g\|_{L^2}\,\|h\|_{L^2}=0,
+\]
+故对一切 $h\in L^2$ 有 $\langle f,h\rangle=\langle g,h\rangle$.
+
+(2)$\Rightarrow$(1)：
+令 $h=f-g\in L^2$，由(2) 得
+\[
+0=\langle f,h\rangle-\langle g,h\rangle
+=\langle f-g,f-g\rangle
+=\|f-g\|_{L^2}^2,
+\]
+从而 $\|f-g\|_{L^2}=0$.证毕.
+\end{proof}
+
+
+\begin{lemma}[{\(\{\phi_j\}_{j\in J}\) 的连续性}]\label{lemma: phi_j连续性}
+设 $K$ 是非空集合 $X$ 上的一个 Mercer 核，$\{\phi_j\}_{j\in J}$ 如上所述，那么，
+对于任意 $j\in J$，当 $\lambda_j>0$ 时，有 $\phi_j$在$X$上一致连续.
+\end{lemma}
+
+\begin{proof}
+    当  $\lambda _{j}> 0$ 时，有 $\phi_j=\lambda_j^{-1}T_{K}\phi_{j}.$ 所以，我们只需证明 $T_K\phi_{j}$ 的连续性.对任意的 $x_1,x_2\in X$,有
+$$\begin{aligned}|T_{K}\phi_{j}(x_{1})-T_{K}\phi_{j}(x_{2})|&\leq\int_{X}|\phi_{j}(y)||K(x_{1},y)-K(x_{2},y)|d\mu(y)|\\&\leq\|\phi_j\|_{L^2(X,\mu)}\Big(\int_X|K(x_1,y)-K(x_2,y)|^2d\mu(y)|\Big)^{1/2}.\end{aligned}$$
+由于$K$ 在 $X\times X$ 上一致连续，结合上式可知：$T_K\phi_j$ 在 $X$ 上一致连续.
+\end{proof}
+
+\begin{lemma}[Dini]\label{lemma:Dini}
+设 $X$ 是一个紧的距离空间，$\{u_k\}_{k\in\mathbb{N}}$ 是 $X$ 上一列连续的非负函数，
+使得级数 $\sum_{k=1}^\infty u_k(x)$ 在 $X$ 上处处收敛于函数 $f(x)$，且 $f$ 是 $X$ 上连续函数.
+那么 $\sum_{k=1}^\infty u_k(x)$ 在 $X$ 上一致收敛于 $f(x)$.
+\end{lemma}
+
+\begin{proof}
+记 $S_n(x):=\sum_{k=1}^n u_k(x)$ 为其部分和.若 $S_n$ 不一致收敛于 $f$，
+则必存在 $\epsilon_0>0$，以及自然数列的子列 $\{k_n\}$ 和点列 $\{x_n\}\subset X$，
+使得 $|S_{k_n}(x_n)-f(x_n)|\ge \epsilon_0$.
+根据 $\{u_k\}_{k\in\mathbb{N}}$ 的非负性，便有
+\[
+f(x_n)-S_{k_n}(x_n)\ge \epsilon_0.
+\]
+从而对任意的 $m\in\mathbb{N}$，当 $k_n\ge m$ 时，有
+\[
+f(x_n)-S_m(x_n)\ge f(x_n)-S_{k_n}(x_n)\ge \epsilon_0.
+\]
+
+由于 $X$ 是紧的，故 $\{x_n\}$ 有收敛的子列.不妨设 $x_n\to x_0\in X$ （$n\to\infty$）.
+于上述不等式中令 $n\to\infty$，得
+\[
+f(x_0)-S_m(x_0)\ge \epsilon_0.
+\]
+这与 $S_n(x_0)\to f(x_0)$ 矛盾.故假设不成立.
+\end{proof}
+
+
+
+\begin{theorem}[Mercer 定理]\label{thm:mercer}
+设 $K$ 是非空集合 $X$ 上的一个 Mercer 核，$\mu$ 是定义在 $X$ 上一个有限的 Borel 测度，且满足 $\mathrm{supp}\,\mu = X$.
+设 $\{\phi_j\}_{j\in J}$, $\{\lambda_j\}_{j\in J}$ 如上所述，则任意$x,y\in X$，级数$\sum_{j\in J} \lambda_j \phi_j(x)\phi_j(y)$逐点绝对收敛，并且在一致收敛的意义下，有
+\begin{equation}\label{eq:mercer}
+    K(x,y) = \sum_{j\in J} \lambda_j \phi_j(x)\phi_j(y), 
+    \qquad \forall x,y \in X.
+\end{equation}
+\end{theorem}
+
+
+\begin{proof}
+     对任意$n\in\mathbb N_+,$ 满足 $\{1,\dots,n\} \subset J,$ 记
+$$K_{n}(x,y) := \sum_{j=1}^{n} \lambda_{j} \phi_{j}(x) \phi_{j}(y).$$
+首先我们证明: 对任意$ x,y \in X$, 有
+$$
+K_{n}(x,x) \leq K(x,x)
+$$
+
+事实上，对任意$f\in L^2(X,\mu),$在$L^2$意义下有
+\begin{equation*}
+    f=\sum_{j\in J}\langle f,\phi_j\rangle\phi_j,\quad T_Kf=\sum_{j\in J}\langle f,\phi_j\rangle\lambda_j\phi_j.
+\end{equation*}
+根据引理\ref{lemma: L2中等价性}可知
+\begin{align*}
+    \int_{X}\int_{X}K(x,y)f(x)f(y)d\mu(x)d\mu(y) & =\langle T_{K}f,f\rangle=\sum_{j\in J}\lambda_{j}|\langle f,\phi_{j}\rangle|^{2}, \\
+\int_{X}\int_{X}K_{n}(x,y)f(x)f(y)d\mu(x)d\mu(y) & =\sum_{j=1}^n\lambda_j|\langle f,\phi_j\rangle|^2.
+\end{align*}
+故
+\begin{equation*}
+    \int_X\int_X[K(x,y)-K_n(x,y)]f(x)f(y)d\mu(x)d\mu(y)\geq0.
+\end{equation*}
+根据引理\eqref{lemma: phi_j连续性}可知$K-K_n$是一个连续的对称函数.故由定理\ref{thm:基于Mercer核的积分算子的半正定性}可知$K-K_n$是核函数.由定理\ref{thm:对称半正定K(xx)>0}有，对任意$x\in X$，有$K(x,x)-K_n(x,x)\geq 0$.
+
+
+然后我们证明函数项级数$\sum_{j\in J} \lambda_j \phi_j(x)\phi_j(y)$逐点绝对收敛. 
+
+因为$K$是紧集$X$上的连续函数因此有界，记$M = \sup_{x\in X} K(x,x)$. 则对任意的$n\in \mathbb{N}_+\cap J$，以及$x,y\in X$，有
+\begin{align}\label{eq:K_n的有界性}
+    \sum_{j=1}^n |\lambda_j\phi_j(x)\phi_j(y)|&\leq \left(\sum_{j=1}^n\lambda_j|\phi_j(x)|^2\right)^{1/2}\left(\sum_{j=1}^n\lambda_j|\phi_j(y)|^2\right)^{1/2} \nonumber\\
+    &\leq \sqrt{K(x,x)K(y,y)}\leq M .
+\end{align}
+因此$\sum_{j\in J} \lambda_j \phi_j(x)\phi_j(y)$逐点绝对收敛.
+逐点绝对收敛一定逐点收敛，记
+$$\widetilde{K}(x,y):=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y)=\lim_{n\to\infty}K_n(x,y).$$
+
+接下来，我们证明对任意$x\in X$，以及几乎处处的$y\in X$，有$K(x,y)= \widetilde{K}(x,y).$
+
+事实上，对任意$\phi_j,n\in\mathbb{N}_+$有
+\begin{align*}
+    \langle K_x,\phi_j\rangle_{L^2 } = \lambda_j \phi_j(x) = \int_{X}K_n(x,y)\phi_j(y)\mathrm{d}\mu (y).
+\end{align*}
+又根据式\eqref{eq:K_n的有界性}有$|K_n(x,y)|\leq \sqrt{K(x,x)K(y,y)}.$，因此，对任意给定的$x\in X$，有
+\begin{equation*}
+    \int_{X} \sqrt{K(x,x)K(y,y)}\cdot |f(y)|\mathrm{d}\mu(y)\leq M \|f\|_1\leq M\|f\|_2 \mu(X)<\infty.
+\end{equation*}
+故由Lebesgue控制收敛定理可知，
+\begin{equation*}
+    \langle K_x,\phi_j\rangle_{L^2} = \lim_{n\to\infty}\int_{X}K_n(x,y)\phi_j(y)\mathrm{d}\mu (y) = \int_{X}\widetilde{K}(x,y)\phi_j(y)\mathrm{d}\mu(y) = \langle \widetilde{K}_x,\phi_j\rangle_{L^2}
+\end{equation*}
+由内积的连续性，对任意$f\in L^2$有
+\begin{equation*}
+    \langle K_x,f\rangle_{L^2}=\langle \widetilde{K}_x,f\rangle_{L^2}
+\end{equation*}
+因此，对任意$x\in X$，以及几乎处处的$y\in X$，有$K(x,y)= \widetilde{K}(x,y).$
+
+
+最后，我们证明$K_n(x,y)$一致收敛到$\widetilde{K}(x,y)$，有了一致收敛后，我们就可以有$\widetilde{K}(x,y)$的连续性.再结合$K,\widetilde{K}$的连续性以及$K = \widetilde{K}~\operatorname{a.e.} ~(x,y)\in X\times X$，即可得$K=\widetilde{K},~~\forall (x,y)\in X\times X,$并且$K_n$一致收敛到$K.$
+
+为此，我们先证，对任意给定的$x\in X$，$K_n(x,y)$对$y\in Y$一致收敛.
+因为
+\begin{align*}
+    \sup_{y\in Y} |\sum_{k=m}^n \lambda_k\phi_k(x)\phi_k(y)|&\leq \sup_{y\in Y}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\left( \sum_{k=m}^n\lambda_k|\phi_k(y)|^2\right)^{1/2}\\
+    &\leq \sqrt M \left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\to 0.
+\end{align*}
+因此，对任意给定的$x\in X$，$K_n(x,y)$对$y\in Y$一致收敛于$\widetilde{K}(x,y).$故对任意给定的$x$，$\widetilde{K}(x,y)$连续，所以对任意的$(x,y)\in X\times X$，有$K(x,y)=\widetilde{K}(x,y).$
+
+此外，$\{K_n(x,x)\}$是单调不减的连续非负函数列，并且逐点收敛到$\widetilde{K}(x,x)=K(x,x)$.由Dini定理\ref{lemma:Dini}可知$K_n(x,x)$在$X$上一致收敛到$K(x,x).$即
+\begin{equation*}
+    \sup_{x\in X}\sum_{k=m}^n \lambda_k|\phi_k(x)|^2\to 0.
+\end{equation*}
+因此，有
+\begin{align*}
+    \sup_{x\in X}\sup_{y\in Y} |\sum_{k=m}^n \lambda_k\phi_k(x)\phi_k(y)|&\leq \sup_{x\in X}\sup_{y\in Y}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\left( \sum_{k=m}^n\lambda_k|\phi_k(y)|^2\right)^{1/2}\\
+    &\leq \sqrt M \sup_{x\in X}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\to 0.
+\end{align*}
+\end{proof}
+
+\begin{corollary}
+级数 $\sum_{k\geq 1}\lambda_k$ 收敛，并且有
+\[
+\sum_{k\geq 1}\lambda_k
+= \int_X K(x,x)\,d\mu(x)
+\;\leq\; \mu(X)\,C_K^2.
+\]
+此外，对所有 $k\geq 1$，成立
+\[
+\lambda_k \;\leq\; \frac{\mu(X)\,C_K^2}{k}.
+\]
+\end{corollary}
+
+\begin{proof}
+在Mercer定理\ref{thm:mercer}中取 $x=y$，得到
+\[
+K(x,x)=\sum_{k\geq 1}\lambda_k \phi_k(x)^2.
+\]
+两边在 $X$ 上积分，并由Lebesgue控制收敛定理得
+\[
+\sum_{k\geq 1}\lambda_k\int_X \phi_k(x)^2\,d\mu(x)
+=\int_X K(x,x)\,d\mu(x)
+\;\leq\;\mu(X)\,C_K^2.
+\]
+由于 $\{\phi_1,\phi_2,\dots\}$ 是一组正交归一基，所以
+\(\int_X \phi_k(x)^2\,d\mu(x)=1\)，
+于是第一个结论成立.
+
+对于第二个结论，由$\{\lambda_k\}$单调不增，有
+\[
+k\,\lambda_k \;\leq\;\sum_{j=1}^k \lambda_j
+\;\leq\;\mu(X)\,C_K^2,
+\]
+即
+\(\lambda_k \leq \mu(X)\,C_K^2/k\).
+\end{proof}
+
+
+
+\end{document}
