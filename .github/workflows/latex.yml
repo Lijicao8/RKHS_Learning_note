@@ -46,20 +46,17 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      # 使用现成的 LaTeX 编译 Action（带 latexmk，支持 biber 与缓存）
-      - name: 编译 LaTeX（latexmk + biber）
+      - name: 编译 LaTeX（latexmk + xelatex）
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: |          # 入口文件
+          root_file: |
             main.tex
-          latexmk_use_biber: true      # 使用 biblatex 时需要 biber
-          latexmk_shell_escape: true   # 若需要 minted/tikz externalize 等
-          # 如果你有 .latexmkrc 并指定输出到 build/，这里无需额外设置
-          # 若需强制指定引擎（如 xelatex），可添加：
-          # args: -xelatex -file-line-error -interaction=nonstopmode
-          extra_system_packages: >-    # 安装额外系统依赖
+          latexmk_use_xelatex: true          # 使用 xelatex
+          latexmk_shell_escape: true         # 若需要 minted/tikz externalize 等
+          args: -file-line-error -interaction=nonstopmode
+          extra_system_packages: >-          # 安装额外系统依赖
             fontconfig
-          cache: true                  # 开启缓存，加速后续构建
+
 
       # 上传编译产物 PDF（兼容根目录和 build/ 目录）
       - name: 上传 PDF 构建产物
