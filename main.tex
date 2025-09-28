@@ -7,6 +7,9 @@
 \usepackage{tikz}
 \usepackage{listings} % 用于代码展示
 
+
+
+
 \addbibresource{ref.bib}
 \title{{\Huge{\textbf{RKHS学习笔记}}}}
 \author{李佶操 \\24212792}
@@ -250,6 +253,30 @@ $$\delta_{x_0}(A) = \begin{cases}
 \end{definition}
 
 
+下面，我们将介绍由Mercer核诱导的再生核 Hilbert 空间$\mathcal{H_K}$的嵌入定理.
+\begin{theorem}
+    设$K$是$X$上一个 Mercer 核，$\mu$是$X$上有限的Borel测度，则
+    
+(1)恒同映射$I_K:\mathcal{H_K}\to C(X)$是连续的，且$\|I_K\|\leq C_K$,其中$C_K:=\sup_{x\in X}\sqrt{K(x,x)}.$
+
+(2)恒同映射$I_\mu:C(X)\to L^2(X,\mu)$是连续的，且$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}.$
+\end{theorem}
+
+\begin{proof}
+    记 $C_K := \sup_{x \in X} \sqrt{K(x, x)}$. 那么, $\forall f \in \mathcal{H}_0 := \text{span}\{K_x | x \in X\}$, 易见 $f \in C(X)$. 由于 $f(x) = \langle f, K_x  \rangle$, 且 $\|K_x\|_{\mathcal{H_K}}^2 = \langle K_x, K_x \rangle = K(x, x) \leq C_K^2$, 我们有
+$$|f(x)| \leq \|f\|_{\mathcal{H_K}} \|K_x\|_{\mathcal{H_K}} \leq C_K \|f\|_{\mathcal{H_K}}.$$
+即$\|f\|_{C(X)}\leq C_K\|f\|_{\mathcal{H_K}}$.显然$\mathcal{H}_0$的完备化空间仍是$C(X)$的子空间，且$\|f\|_{C(X)}\leq$
+$C_{K}\|f\|_{\mathcal{H_K}}$对$f\in\mathcal{H_K}$仍成立.故(1)成立.
+
+对任意的$f\in C(X)$,显然有
+
+$$\int_X|f(x)|^2d\mu(x)\leq\|f\|_{C(X)}^2\mu(X).$$
+故$f\in L^2(X,\mu)$,且恒同映射$I_\mu:C(X)\to L^2(X,\mu)$满足$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}$.所以（2）成立.
+\end{proof}
+
+在研究完$\mathcal{H}_k$的嵌入关系后. 进一步，我们希望了解$\mathcal{H_K}$是$L^2(X,\mu)$的一个怎样的子空间，它等于$L^2(X,\mu)$吗？ 在$L^2(X,\mu)$中稠密吗？是有限维子空间吗？为了研究这些问题，我们将介绍著名的Mercer定理.
+
+\subsection{由核函数诱导的积分算子}
 下面均考虑$X$是一个紧的距离空间, $\mu$是$X$上一个有限的Borel测度.$K:X\times X\to\mathbb{R}$是对称的连续函数.令$T_K$表示由核$K(x,y)$诱导的积分算子，即
 \begin{equation*}
     T_Kf(x):=\int_X f(y)K(x,y)\mathrm{d}\mu(y),\quad f\in L^2(X,\mu)
@@ -314,72 +341,27 @@ $$f(x) := \sum^{n}_{i=1} \frac{c_i}{\mu(B(x_i, \delta'))} \mathcal{X}_{B(x_i, \d
 
 \textbf{注：}式\eqref{eq: K的半正定性转}不能由式\eqref{eq:微分中值定理}结合Lebesgue微分中值定理直接得到，因为对于Lebesgue 微分中值定理依赖于Vitali 覆盖性质，但是对于一般的Borel测度，vitali性质不一定满足. 而对于该定理，完全可以绕过微分中值定理，利用$K$的连续性即可.
 
-下面，我们将介绍由Mercer核诱导的再生核 Hilbert 空间$\mathcal{H_K}$的嵌入定理.
-\begin{theorem}
-    设$K$是$X$上一个 Mercer 核，$\mu$是$X$上有限的Borel测度，则
-    
-(1)恒同映射$I_K:\mathcal{H_K}\to C(X)$是连续的，且$\|I_K\|\leq C_K$,其中$C_K:=\sup_{x\in X}\sqrt{K(x,x)}.$
-
-(2)恒同映射$I_\mu:C(X)\to L^2(X,\mu)$是连续的，且$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}.$
-\end{theorem}
-
-\begin{proof}
-    记 $C_K := \sup_{x \in X} \sqrt{K(x, x)}$. 那么, $\forall f \in \mathcal{H}_0 := \text{span}\{K_x | x \in X\}$, 易见 $f \in C(X)$. 由于 $f(x) = \langle f, K_x  \rangle$, 且 $\|K_x\|_{\mathcal{H_K}}^2 = \langle K_x, K_x \rangle = K(x, x) \leq C_K^2$, 我们有
-$$|f(x)| \leq \|f\|_{\mathcal{H_K}} \|K_x\|_{\mathcal{H_K}} \leq C_K \|f\|_{\mathcal{H_K}}.$$
-即$\|f\|_{C(X)}\leq C_K\|f\|_{\mathcal{H_K}}$.显然$\mathcal{H}_0$的完备化空间仍是$C(X)$的子空间，且$\|f\|_C(X)\leq$
-$C_{K}\|f\|_{\mathcal{H}_{K}}$对$f\in\mathcal{H}_{K}$仍成立.故(1)成立.
-
-对任意的$f\in C(X)$,显然有
-
-$$\int_X|f(x)|^2d\mu(x)\leq\|f\|_{C(X)}^2\mu(X).$$
-故$f\in L^2(X,\mu)$,且恒同映射$I_\mu:C(X)\to L^2(X,\mu)$满足$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}$.所以（2）成立.
-\end{proof}
-
-
-进一步，我们希望了解$\mathcal{H_K}$是$L^2(X,\mu)$的一个怎样的子空间，它等于$L^2(X,\mu)$吗？ 在$L^2(X,\mu)$中稠密吗？是有限维子空间吗？为了研究这些问题，我们需要取$L^2(X,\mu)$的一个规范正交基$\{\phi_j\}_{j\in J}$.对于紧距离空间$X$和有限测度$\mu$,下面我们将说明$L^2(X,\mu)$可分，因此存在可数的规范正交基.
-
-\begin{lemma}[\cite{Cohn2013MeasureTheory2}命题3.4.5]
-    Let $(X,\mathcal{A},\mu)$ be a measure space, and let $p$ satisfy $1 \leq p < +\infty$. If $\mu$ is $\sigma$-finite and $\mathcal{A}$ is countably generated, 
-then $L^p(X,\mathcal{A},\mu)$ is separable.
+\begin{lemma}[SejdinovicGretton2012RKHSNotes]\label{lemma:Sejdinovic}
+设 $\mathcal{F}$ 为一Hilbert空间，$T:\mathcal{F}\to\mathcal{F}$ 为半正定的紧、自伴算子.
+则存在一个至多可数的规范正交基$\{\phi_j\}_{j\in J}\subset\mathcal{F}$ 与一列实数
+$\{\lambda_j\}_{j\in J}$，满足
+\[
+\lambda_1\ge \lambda_2\ge \cdots \geq  0,\qquad \lambda_j\to 0,
+\]
+使得对任意 $f\in\mathcal{F}$，
+\[
+Tf=\sum_{j\in J}\lambda_j\,\langle f,\phi_j\rangle_{\mathcal{F}}\,\phi_j .
+\]
 \end{lemma}
 
-要说明$L^2$是可分的，下面我们只需要证明$\mu$是可数生成的即可.事实上$X$是紧的，因而是完全有界的，因此对任意的$n\in \mathbb{N}_+$，存在有穷的$x_{k_n},k_n\in [N_n]$，使得
-\begin{equation*}
-    X\subset \bigcup_{k_n=1}^{N_n} B(x_{k_n},\frac 1n).
-\end{equation*}
-令$D:=\{x_{k_n},n\in \mathbb{N}_+,k_n\in[N_n]\}$，是$X$的可数稠密子集.
 
-令
-\begin{equation*}
-    \mathcal{B}:=\{B(x,r):x\in D,r\in\mathbb{R}\cap (0,\infty)\},
-\end{equation*}
-显然$\mathcal{B}$是可数集，下断言它是$X$的拓扑基.
-
-对于任意的$x\in X$，以及包含$x$的开集$U$. 故存在有理数$r_0$充分小，使得$B(x,r_0)\subset U$.取充分大的$n_0$满足：$\frac{1}{n_0}\leq \frac{r_0}{3}$，故存在$x_1\in D$，使得$d(x,x_1)\leq \frac{r_0}{3}$.故任意$y\in B(x_1,\frac{r_0}{3})\in\mathcal{B}$，$d(x,y)\leq d(x,x_1)+d(x_1,y)<r_0.$即$B(x_1,\frac{r_0}{3})\subset U$. 因此$\mathcal{B}$是$X$的拓扑基.
-
-由于 $\mu$ 的可测集合由 $X$ 上的开集生成，而 $\mathcal{B}$ 又生成所有开集，故 $\mu$ 的 $\sigma$-代数由可数族 $\mathcal{B}$ 生成，即 $\mu$ 是可数生成的.由引理可知，$L^2(X,\mu)$ 是可分的.
-
-因此，$L^2(X,\mu)$ 中存在一个可数稠密子集.对该稠密子集应用 Gram--Schmidt 正交化过程，即可得到一组可数的规范正交基,记为$\{\phi_j\}_{j\in J}$.故任意$x\in X$，有$K_x\in L^2(X,\mu)$，因此
-\begin{equation*}
-    K_x=\sum_{j\in J} \langle K_x,\phi_j\rangle_{L^2}\phi_{j}
-\end{equation*}
-注意这里的等号是在$L^2$范数意义下成立. 而不是逐点收敛.
-
-
-根据前面的分析，我们已经知道对于mercer核诱导的算子$T_K$是自伴半正定的紧算子.除此之外，不严谨的有
-
-\begin{equation*}
-    K(x,y)=\sum_{j\in J}\langle K_x,\phi_j\rangle_{L^2} \phi_j(y)=\sum_{j\in J}T_K(\phi_j)(x)\phi_j(y)=T_K\left(\sum_{j\in J}\phi_j(y) \phi_j\right)(x).
-\end{equation*}
-即$K_y=T_K\left(\sum_{j\in J}\phi_j(y) \phi_j\right),$ 从而$\mathcal{H_K}\subset T_K\left(L^2(X,\mu)\right)$.
-
-
-下面我们将严谨的证明$\mathcal{H_K}= T_K\left(L^2(X,\mu)\right)$. 为了研究方便，我们取$T_K$的一组特征向量作为$L^2(X,\mu)$的规范正交基,即存在$\{\phi_j\}_{j\in J}$是$L^2(X,\mu)$的一组规范正交基，满足
+\subsection{Mercer定理}
+根据前面的分析，我们已经知道对于mercer核诱导的算子$T_K$是自伴半正定的紧算子.根据引理\ref{lemma:Sejdinovic}，我们取$T_K$的一组特征向量作为$L^2(X,\mu)$的规范正交基,即存在$\{\phi_j\}_{j\in J}$是$L^2(X,\mu)$的一组规范正交基，满足
 
 $$T_K\phi_j=\lambda_j\phi_j,\quad j\in J,$$
 其中 $J$ 是有限集或 $J=\mathbb{N}_+,\lambda_1\geq\lambda_2\geq\cdots,$且当$J=\mathbb{N}_+$时,有 $\lambda_j\to0~(j\to\infty).$
 
-下面，我们将证明著名的Mercer定理，借助此定理，可以证明$\mathcal{H_K}= T_K\left(L^2(X,\mu)\right)$，我们先给出以下几个引理.
+下面，我们将证明著名的Mercer定理，为此，我们先给出以下几个引理.
 \begin{lemma}[$L^2$意义下相等的等价性]\label{lemma: L2中等价性}
     设 $(X,\mathcal{A},\mu)$ 为测度空间，$f,g\in L^2(X,\mu)$.则以下两条等价：
 \begin{enumerate}
@@ -539,6 +521,12 @@ $$\widetilde{K}(x,y):=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y)=\lim_{n\to\infty}
     &\leq \sqrt M \sup_{x\in X}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\to 0.
 \end{align*}
 \end{proof}
+\noindent\textbf{注：}Mercer定理给出了核函数的另一种特征映射：
+\begin{equation*}
+    K(x,y) =\langle \sum_{j\in J}\sqrt{\lambda_j}\phi_j(x),\sum_{j\in J}\sqrt{\lambda_j}\phi_j(y)\rangle.
+\end{equation*}
+
+
 
 \begin{corollary}
 级数 $\sum_{k\geq 1}\lambda_k$ 收敛，并且有
@@ -576,6 +564,97 @@ k\,\lambda_k \;\leq\;\sum_{j=1}^k \lambda_j
 即
 \(\lambda_k \leq \mu(X)\,C_K^2/k\).
 \end{proof}
+
+
+
+\subsection{$\mathcal{H_K}$与$L^2(X,\mu)$的关系}
+由于$0\leq \lambda_j\leq \lambda_1~(\forall j\in J)$
+，记$J_+:=\{j\in J:\lambda_j>0\}$，定义
+\begin{equation*}
+    \mathcal{H}_{K,\mu}:=\{f=\sum_{j\in J^+}\sqrt{\lambda_j}c_j\phi_j:\{c_j\}\in\ell^2(J_+)\},
+\end{equation*}
+其中求和是在$L^2$意义下的，由于
+\begin{equation*}
+    \|f\|_2 = \sum_{j\in J_+}\lambda_j c_j^2\leq \lambda_1\sum_{j\in J_+}c_j^2<\infty,
+\end{equation*}
+因此求和在$L^2(X,\mu)$范数意义下是收敛的,因此上述定义是合理的. 定义其上的内积：
+\begin{equation}\label{eq: H_Kmu 内积}
+    \langle f , g \rangle_{\mathcal{H}_{K,\mu}}
+:= \sum_{j\in J_+} a_j\,b_j,
+\qquad
+\forall\, 
+f := \sum_{j\in J} \sqrt{\lambda_j}\, a_j\, \phi_j,\quad
+g := \sum_{j\in J} \sqrt{\lambda_j}\, b_j\, \phi_j \in \mathcal{H}_{K,\mu}.
+\end{equation}
+容易验证它是一个内积，下证明完备性.任取$\mathcal{H}_{K,\mu}$的Cauchy列$\{f_n:=\sum_{j\in J_+}\sqrt{\lambda_j}c^{(n)}_j\phi_j\}$，则有
+\begin{equation*}
+    \|f_m - f_n\|_{\mathcal{H}_{K,\mu}} = \|c^{(m)}-c^{(n)}\|_{\ell^2(J_+)}\to 0.
+\end{equation*}
+由$\ell^2(J_+)$的完备性可知$c^{(n)}\to c\in\ell^2(J_+).$令$f_0:=\sum_{j\in J^+}c_j\phi_j\in\mathcal{H}_{K,\mu}$，并且有$f_n\to f_0~(\mathcal{H}_{K,\mu})$，因此$\left(\mathcal{H}_{K,\mu},\langle\cdot,\cdot\rangle_{\mathcal{H}_{K,\mu}}\right)$完备.
+
+定义$L^2(X,\mu)$的子空间
+\begin{equation*}
+    L^2(X,\mu)_+:=\{f\in L^2(X,\mu):\langle f,\phi_j\rangle = 0,\forall j\in J\backslash J_+\},
+\end{equation*}
+事实上，还有
+\begin{equation*}
+    L^2(X,\mu) = L^2(X,\mu)_+ \oplus \operatorname{Ker}(T_K).
+\end{equation*}
+
+满足\(T_k = T_k^{1/2}\circ T_k^{1/2}\)的算子 \(T_k^{1/2}\)定义为
+\begin{equation}\label{eq:算子T_k1/2}
+    T_K^{1/2}f:=\sum_{j\in J_+}\sqrt{\lambda_j}a_j\phi_j,\qquad \forall f=\sum_{j\in J}a_j\phi_j\in L^2(X,\mu).
+\end{equation}
+事实上，容易得到，对任意$f\in L^2(X,\mu)_+$，有$T_K^{1/2}f\in \mathcal{H}_{K,\mu}$，并且满足以下等式：
+\begin{equation}\label{eq:等距同构}
+    \|T_K^{1/2}f\|_{\mathcal{H}_{K,\mu}}^2 = \sum_{j\in J_+}|a_j|^2 = \|f\|^2_{L^2(X,\mu)}.
+\end{equation}
+
+下面证明$\mathcal{H}_{K,\mu}$就是我们所要找的$\mathcal{H_K}$，并且$T_K^{1/2}$是$ L^2(X,\mu)_+$与$\mathcal{H}_{K,\mu}$之间的一个等距同构.
+
+\begin{theorem}\label{thm:Mercer-isometry}
+设 $K$ 是一个 Mercer 核，则
+\[
+\mathcal{H}_{K,\mu}\subset C(X), \qquad \mathcal{H}_{K,\mu}=\mathcal {H_K},
+\]
+并且由式\eqref{eq:算子T_k1/2} 所定义的算子
+\[
+T_{K}^{1/2}:~L^{2}(X,\mu)_{+}\longrightarrow \mathcal{H}_{K,\mu}
+\]
+是一个等距同构.
+\end{theorem}
+
+\begin{proof}
+    对任意$f = \sum_{j\in J^+}\sqrt{\lambda_j}a_j\phi_j\in \mathcal{H}_{K,\mu}$，$\{a_j\}\in \ell^2(J_+)$.因此对任意$x\in X$有
+    \begin{align*}
+        \sup_{x\in X} \left|\sum_{k=m}^n \sqrt{\lambda_k}a_k\phi_k(x)\right|&\leq \sup_{x\in X}\left(\sum_{k=m}^na_k^2\right)^{1/2}\left(\sum_{k=m}^n\lambda_k\phi^2_k(x)\right)^{1/2}\\
+        &\leq C_K\left(\sum_{k=m}^na_k^2\right)^{1/2}\to 0,
+    \end{align*}
+其中$C_K = \sup_{x\in X}K(x,x)$.由柯西收敛准则，有上述级数在$X$上一致收敛，故$f$连续，即$\mathcal{H}_{K,\mu}\subset C(X).$
+
+又因为对任意的$x\in X$,有$K_x = \sum_{j\in J}\sqrt{\lambda_j}c_j\phi_j$，$c_j:=\sqrt{\lambda_j}\phi_j(x)$，因此有
+\begin{equation*}
+    \sum_{j\in J_+}c_j^2 = \sum_{j\in J}c_j^2 = \sum_{j\in J}\lambda_j\phi_j^2(x) = K(x,x)<\infty,
+\end{equation*}
+即$K_x\in \mathcal{H}_{K,\mu}.$此外，由式\eqref{eq: H_Kmu 内积}有
+\begin{equation*}
+    \langle f,K_x\rangle_{\mathcal{H}_{K,\mu}}=\sum_{j\in J_+}\sqrt{\lambda_j}a_j\phi_j(x) = f(x),
+\end{equation*}
+因此$\mathcal{H}_{K,\mu}$以$K$为的再生核的Hilbert空间，由RKHS的唯一性可知$\mathcal{H}_{K,\mu}=\mathcal{H_K}.$
+
+最后证明等距同构，根据式\eqref{eq:等距同构}，只需证$T_K^{1/2}$是满射即可.
+
+对任意$f = \sum_{j\in J^+}\sqrt{\lambda_j}a_j\phi_j\in \mathcal{H}_{K,\mu}$，令$$g:=\sum_{j\in J^+}a_j\phi_j\in L^2(X,\mu)_+,$$即有$T_K^{1/2}g = f$.因此定理得证.
+\end{proof}
+根据定理\ref{thm:Mercer-isometry}，我们有
+\[
+\mathcal{H}_K \;=\; H_{K,\mu} \;=\; T_K^{1/2}\big(L^{2}(X,\mu)_{+}\big).
+\]
+值得注意的是，$H_{K,\mu}$ 和 $T_K^{1/2}\!\left(L^{2}(X,\mu)_{+}\right)$ 的定义都依赖于
+$X$ 上的 Borel 测度 $\mu$.然而，上述结果表明：实际上它们与 $\mu$ 无关，
+而完全由正定核 $K$ 决定——这正是因为空间 $\mathcal{H}_K$ 完全由 $K$ 唯一定义.
+
+
 
 
 
