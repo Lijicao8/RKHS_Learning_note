@@ -1,0 +1,34 @@
+% preamble.tex —— 统一导言（与 common/* 配合）
+
+% 基础宏包
+\usepackage{amsmath, amsthm, amssymb, bm, graphicx, mathrsfs}
+\usepackage[hidelinks]{hyperref}      % 去掉链接方框
+\usepackage{algorithm}
+\usepackage{algorithmic}              % 或 \usepackage{algpseudocode}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{subfiles}
+
+
+
+% 行距
+\linespread{1.5}
+
+% ----------------- 文献（biblatex + biber） -----------------
+% 方案 1：全局参考文献（简单）
+\usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
+\addbibresource{ref.bib}
+
+% 若想“每章独立参考文献”，请改为：
+% \usepackage[backend=biber,style=authoryear,sorting=nyt,refsection=chapter]{biblatex}
+% 然后在每章/子文件末尾：\printbibliography[heading=subbibliography]
+
+% ----------------- 公共样式与宏（放在导言末尾） -----------------
+% 这些文件内包含：常用数学命令、定理环境、页面样式/目录/链接/listings 等
+\input{common/macros}
+\input{common/theorems}
+\input{common/style}
+
+% （可选）若需要 cleveref 智能引用，请在 common/style.tex 里按注释开启
+% （可选）若需要更多 tikz 库，也在 common/style.tex 中开启 \usetikzlibrary{...}

@@ -1,40 +1,5 @@
-\documentclass[12pt, a4paper, oneside]{ctexbook}
-\usepackage{amsmath, amsthm, amssymb, bm, graphicx, hyperref, mathrsfs}
-
-\usepackage{biblatex}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{tikz}
-\usepackage{listings} % 用于代码展示
-
-
-
-
-\addbibresource{ref.bib}
-\title{{\Huge{\textbf{RKHS学习笔记}}}}
-\author{李佶操 \\24212792}
-\linespread{1.5}
-\newtheorem{theorem}{定理}[section]
-\newtheorem{definition}[theorem]{定义}
-\newtheorem{lemma}[theorem]{引理}
-\newtheorem{corollary}[theorem]{推论}
-\newtheorem{example}[theorem]{例}
-\newtheorem{proposition}[theorem]{命题}
-
+\documentclass[../master.tex]{subfiles}
 \begin{document}
-
-\maketitle
-
-\pagenumbering{roman}
-\setcounter{page}{1}
-
-\pagenumbering{Roman}
-\setcounter{page}{1}
-\tableofcontents
-\newpage
-\setcounter{page}{1}
-\pagenumbering{arabic}
-
 \chapter{RKHS基础知识}
 \section{再生核 Hilbert 空间}
 本节首先给出核函数与再生核希尔伯特空间（RKHS）的定义，并阐明二者之间的一一对应关系. 随后引入特征映射与特征空间的概念，说明由特征映射所诱导的 RKHS 可等距嵌入至相应的特征空间.
@@ -240,39 +205,40 @@ $$\left\|\sum_{i=1}^{m}c_{i}K_{x_{i}}\right\|_{\mathcal{H_K}}^{2}=\sum_{i=1}^{m}
 
 
 \section{Mercer 核情形的再生核Hilbert空间}
-以$K:X\times X \to \mathbb{R}$为再生核的Hilbert空间$\mathcal{H_K}$是$X$上一些函数的集合，我们自然的希望将$\mathcal{H_K}$嵌入到某个熟知的Hilbert空间中，并且这个空间中的元素也是$X$上的函数.一个自然的选择是实的$L^2(X,\mu)$，这就需要对$X$赋予一个测度结构，才能定义其上的可测函数以及积分. 我们设$X$是一个距离空间，$\mu$是定义在$X$的Borel集上的一个Borel 测度.
 
-\textbf{注：} $X$是距离空间就自然地定义了其上的拓扑结构，因此这里的Borel集是指这个由距离诱导的拓扑，其全体开集构成的$\sigma$代数的元素.即任意开集、闭集的任意交并. 因此简单函数、连续函数显然都是Borel可测函数.
+在上一节的末尾，我们证明了，给定特征空间核特征映射，特征映射诱导的RKHS等距嵌入到特征空间中. 那么对于一般的
+RKHS $\mathcal{H_K}$，我们自然的希望将$\mathcal{H_K}$嵌入到某个熟知的Hilbert空间中，并且这个空间中的元素也是$X$上的函数.一个自然的选择是实的$L^2(X,\mu)$，这就需要对$X$赋予一个测度结构，才能定义其上的可测函数以及积分. 我们设$X$是一个距离空间，$\mu$是定义在$X$的Borel集上的一个Borel 测度.
+
+\textbf{注：} $X$是距离空间就自然地定义了其上的拓扑结构，因此这里的Borel集是指这个由距离诱导的拓扑，其全体开集构成的$\sigma$代数的元素.即任意开集、闭集的任意交并. 因此简单函数、连续函数自然是Borel可测函数.
 
 
+\subsection{Mercer诱导的RKHS的连续嵌入}
 在再生核Hilbert空间理论中我们通常假设$\mu$是$X$上有限的，即$\mu(X)<\infty$. 此外，我们用$\operatorname{supp} \mu$表示$\mu$的支集，其定义为：
 \begin{equation*}
     \mathrm{supp}\mu:=\{x\in X|\mu(B(x,\epsilon))>0,\forall\epsilon>0\}，
 \end{equation*}
-对于Lebesgue测度$\lambda$，显然$\operatorname{supp}\lambda=X$.
-\begin{example}
-    Dirac 测度（Dirac measure）是在可测空间 $(X, \mathcal{F})$ 上以某个点 $x_0 \in X$ 为“全部质量”的概率测度，记作 $\delta_{x_0}$，定义为
+
+不同的测度实际上是对集合不同的测量标准，对于Lebesgue测度$\lambda$，其测量的是集合的体积，显然对任意$\lambda>0$，球$B(x,\epsilon)$的体积大于0，故$\operatorname{supp}\lambda=X$.而Dirac 测度
 $$\delta_{x_0}(A) = \begin{cases}
 1, & x_0 \in A, \\
 0, & x_0 \notin A,
-\end{cases} \quad A \in \mathcal{F}.$$
+\end{cases} \quad A \in \mathcal{F},$$
+$\delta_{x_0}(A)$实际上是衡量点$x_0$是否在集合$A$中.因此$\operatorname{supp}\delta_{x_0}=\{x_0\}.$
 
-则$\operatorname{supp}\delta_{x_0}=\{x_0\}.$
-\end{example}
 
 为了使$K_x\in L^2(X,\mu)$，我们通常假设$X$是紧的，并且$K$是连续的，这就是Mercer核的定义：
-\begin{definition}
+\begin{definition}[Mercer核]
     设$X$是一个紧的距离空间，$K:X\times X\to\mathbb{R}$是一个对称半正定函数，若$K$是连续的，则称之为$X$上一个Mercer核.
 \end{definition}
 
 
-下面，我们将介绍由Mercer核诱导的再生核 Hilbert 空间$\mathcal{H_K}$的嵌入定理.
-\begin{theorem}
+下面，我们将介绍由Mercer核诱导的再生核 Hilbert 空间$\mathcal{H_K}$的连续嵌入定理.
+\begin{theorem}[Mercer 核诱导的RKHS的嵌入定理]
     设$K$是$X$上一个 Mercer 核，$\mu$是$X$上有限的Borel测度，则
     
-(1)恒同映射$I_K:\mathcal{H_K}\to C(X)$是连续的，且$\|I_K\|\leq C_K$,其中$C_K:=\sup_{x\in X}\sqrt{K(x,x)}.$
+$(1)$恒同映射$I_K:\mathcal{H_K}\to C(X)$是连续的，且$\|I_K\|\leq C_K$,其中$C_K:=\sup_{x\in X}\sqrt{K(x,x)}.$
 
-(2)恒同映射$I_\mu:C(X)\to L^2(X,\mu)$是连续的，且$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}.$
+$(2)$恒同映射$I_\mu:C(X)\to L^2(X,\mu)$是连续的，且$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}.$
 \end{theorem}
 
 \begin{proof}
@@ -287,7 +253,7 @@ $$\int_X|f(x)|^2d\mu(x)\leq\|f\|_{C(X)}^2\mu(X).$$
 故$f\in L^2(X,\mu)$,且恒同映射$I_\mu:C(X)\to L^2(X,\mu)$满足$\|I_\mu\|\leq C_\mu:=\sqrt{\mu(X)}$.所以（2）成立.
 \end{proof}
 
-在研究完$\mathcal{H}_k$的嵌入关系后. 进一步，我们希望了解$\mathcal{H_K}$是$L^2(X,\mu)$的一个怎样的子空间，它等于$L^2(X,\mu)$吗？ 在$L^2(X,\mu)$中稠密吗？是有限维子空间吗？为了研究这些问题，我们将介绍著名的Mercer定理.
+上面定理说明了Mercer核诱导的RKHS连续嵌入到连续函数空间中，更进一步，连续嵌入到$L^2$中.在研究完$\mathcal{H}_k$的连续嵌入关系后. 进一步，我们希望了解$\mathcal{H_K}$是$L^2(X,\mu)$的一个怎样的子空间，它等于$L^2(X,\mu)$或者等距嵌入到$L^2(X,\mu)$中吗？ 在$L^2(X,\mu)$中稠密吗？是有限维子空间吗？为了研究这些问题，我们将介绍著名的Mercer定理，而这又依赖于我们下一小节所介绍的由核算子诱导的积分算子.
 
 \subsection{由核函数诱导的积分算子}
 下面均考虑$X$是一个紧的距离空间, $\mu$是$X$上一个有限的Borel测度.$K:X\times X\to\mathbb{R}$是对称的连续函数.令$T_K$表示由核$K(x,y)$诱导的积分算子，即
@@ -302,8 +268,8 @@ $$\int_X|f(x)|^2d\mu(x)\leq\|f\|_{C(X)}^2\mu(X).$$
 \end{equation*}
 结合$\mu(X)<\infty$，有$T_Kf\in L^2(X,\mu)$.
 
-除此之外，算子$T_K$还是紧的自伴算子，即$\langle T_Kf,f\rangle=\langle f,T_Kf\rangle$. 紧性由Arzelà–Ascoli 定理即可得到，而自伴性由$K$的对称性即可得到.而下面的定理将说明对于Mercer核而言，积分算子的半正定性，即$\langle T_Kf,f\rangle\geq 0~(\forall f\in L^2(X,\mu))$，可由积分核$K$的半正定性得到.
-\begin{theorem}[基于Mercer核的积分算子的半正定性]\label{thm:基于Mercer核的积分算子的半正定性}
+除此之外，算子$T_K$还是紧的自伴算子，即$\langle T_Kf,f\rangle_{L^2(X,\mu)}=\langle f,T_Kf\rangle_{L^2(X,\mu)}$. 紧性由Arzelà–Ascoli 定理即可得到，而自伴性由$K$的对称性即可得到.而下面的定理将说明对于Mercer核而言，积分算子的半正定性（对任意$f\in L^2(X,\mu)$有$\langle T_Kf,f\rangle_{L^2(X,\mu)}\geq 0$），可由积分核$K$的半正定性得到.
+\begin{theorem}[核积分算子的半正定性]\label{thm:基于Mercer核的积分算子的半正定性}
     设 $X$ 是一个紧的距离空间, $\mu$ 是 $X$ 上一个有限的 Borel 测度, $K: X \times X \to \mathbb{R}$ 是一个连续的对称函数, 那么
 
 (1) 若 $K$ 是半正定函数, 则$T_K$是半正定的，即
@@ -354,6 +320,8 @@ $$f(x) := \sum^{n}_{i=1} \frac{c_i}{\mu(B(x_i, \delta'))} \mathcal{X}_{B(x_i, \d
 
 \textbf{注：}式\eqref{eq: K的半正定性转}不能由式\eqref{eq:微分中值定理}结合Lebesgue微分中值定理直接得到，因为对于Lebesgue 微分中值定理依赖于Vitali 覆盖性质，但是对于一般的Borel测度，vitali性质不一定满足. 而对于该定理，完全可以绕过微分中值定理，利用$K$的连续性即可.
 
+
+根据以上叙述，我们可知Mercer核诱导的积分算子$T_K$是半正定的紧、自伴算子，因而可以进行以下的谱分解：
 \begin{lemma}[SejdinovicGretton2012RKHSNotes]\label{lemma:Sejdinovic}
 设 $\mathcal{F}$ 为一Hilbert空间，$T:\mathcal{F}\to\mathcal{F}$ 为半正定的紧、自伴算子.
 则存在一个至多可数的规范正交基$\{\phi_j\}_{j\in J}\subset\mathcal{F}$ 与一列实数
@@ -369,7 +337,7 @@ Tf=\sum_{j\in J}\lambda_j\,\langle f,\phi_j\rangle_{\mathcal{F}}\,\phi_j .
 
 
 \subsection{Mercer定理}
-根据前面的分析，我们已经知道对于mercer核诱导的算子$T_K$是自伴半正定的紧算子.根据引理\ref{lemma:Sejdinovic}，我们取$T_K$的一组特征向量作为$L^2(X,\mu)$的规范正交基,即存在$\{\phi_j\}_{j\in J}$是$L^2(X,\mu)$的一组规范正交基，满足
+根据引理\ref{lemma:Sejdinovic}，我们取$T_K$的一组特征向量作为$L^2(X,\mu)$的规范正交基,即存在$\{\phi_j\}_{j\in J}$是$L^2(X,\mu)$的一组规范正交基，满足
 
 $$T_K\phi_j=\lambda_j\phi_j,\quad j\in J,$$
 其中 $J$ 是有限集或 $J=\mathbb{N}_+,\lambda_1\geq\lambda_2\geq\cdots,$且当$J=\mathbb{N}_+$时,有 $\lambda_j\to0~(j\to\infty).$
@@ -377,38 +345,36 @@ $$T_K\phi_j=\lambda_j\phi_j,\quad j\in J,$$
 下面，我们将证明著名的Mercer定理，为此，我们先给出以下几个引理.
 \begin{lemma}[$L^2$意义下相等的等价性]\label{lemma: L2中等价性}
     设 $(X,\mathcal{A},\mu)$ 为测度空间，$f,g\in L^2(X,\mu)$.则以下两条等价：
-\begin{enumerate}
-    \item $\|f-g\|_{L^2}=0$（即 $f=g$ 在 $L^2$ 意义下，亦即几乎处处相等）；
-    \item 对任意 $h\in L^2(X,\mu)$，都有
+
+$(1)~\|f-g\|_{L^2(X,\mu)}=0$；
+
+$(2)$对任意 $h\in L^2(X,\mu)$，都有
     \[
-        \langle f,h\rangle=\langle g,h\rangle,
+        \langle f,h\rangle_{L^2(X,\mu)}=\langle g,h\rangle_{L^2(X,\mu)}.
     \]
-    其中 $\langle u,v\rangle:=\int_X u\,\overline{v}\,d\mu$ 为 $L^2$ 的内积.
-\end{enumerate}
+
 
 \end{lemma}
 \begin{proof}
 (1)$\Rightarrow$(2)：
 由柯西–施瓦茨不等式，
 \[
-\big|\langle f,h\rangle-\langle g,h\rangle\big|
-=\big|\langle f-g,h\rangle\big|
-\le \|f-g\|_{L^2}\,\|h\|_{L^2}=0,
+\big|\langle f,h\rangle_{L^2(X,\mu)}-\langle g,h\rangle_{L^2(X,\mu)}\big|
+=\big|\langle f-g,h\rangle_{L^2(X,\mu)}\big|
+\le \|f-g\|_{L^2(X,\mu)}\,\|h\|_{L^2(X,\mu)}=0,
 \]
-故对一切 $h\in L^2$ 有 $\langle f,h\rangle=\langle g,h\rangle$.
+故对一切 $h\in L^2(X,\mu)$ 有 $\langle f,h\rangle_{L^2(X,\mu)}=\langle g,h\rangle_{L^2(X,\mu)}$.
 
 (2)$\Rightarrow$(1)：
-令 $h=f-g\in L^2$，由(2) 得
+令 $h=f-g\in L^2(X,\mu)$，由(2) 得
 \[
-0=\langle f,h\rangle-\langle g,h\rangle
-=\langle f-g,f-g\rangle
-=\|f-g\|_{L^2}^2,
+0=\langle f,h\rangle_{L^2(X,\mu)}-\langle g,h\rangle_{L^2(X,\mu)}=\|f-g\|_{L^2(X,\mu)}^2,
 \]
-从而 $\|f-g\|_{L^2}=0$.证毕.
+从而 $\|f-g\|_{L^2(X,\mu)}=0$.证毕.
 \end{proof}
 
 
-\begin{lemma}[{\(\{\phi_j\}_{j\in J}\) 的连续性}]\label{lemma: phi_j连续性}
+\begin{lemma}[{\(\{\phi_j\}_{j\in J}\) 的一致连续性}]\label{lemma: phi_j连续性}
 设 $K$ 是非空集合 $X$ 上的一个 Mercer 核，$\{\phi_j\}_{j\in J}$ 如上所述，那么，
 对于任意 $j\in J$，当 $\lambda_j>0$ 时，有 $\phi_j$在$X$上一致连续.
 \end{lemma}

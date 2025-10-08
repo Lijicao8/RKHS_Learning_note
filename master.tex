@@ -1,0 +1,22 @@
+% master.tex —— 全局参考文献版
+\documentclass[12pt,a4paper,oneside]{ctexbook}
+
+% 统一导言（含 biblatex 与 addbibresource）
+\input{preamble}
+
+\title{{\Huge{\textbf{RKHS学习笔记}}}}
+\author{李佶操\\24212792}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% ===== 正文（示例） =====
+\subfile{chapters/chapter_1}  % 插入子文件
+
+
+% ===== 全局参考文献，一次输出 =====
+\printbibliography
+
+\end{document}

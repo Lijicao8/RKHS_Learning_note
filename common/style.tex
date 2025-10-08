@@ -1,0 +1,105 @@
+% ========= common/style.tex =========
+% 页面样式、目录深度、超链接、代码与算法样式等
+
+% 页边距（如已在其他处设置 geometry，可删去）
+\IfFileExists{geometry.sty}{\RequirePackage[a4paper,margin=1in]{geometry}}{}
+
+% 超链接样式（配合 preamble 中 \usepackage[hidelinks]{hyperref}）
+% 如需彩色链接可改为 colorlinks 方案：
+% \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+\hypersetup{pdfauthor={},
+            pdftitle={},
+            pdfsubject={},
+            pdfcreator={}, pdfproducer={},
+            pdfkeywords={}
+}
+
+% 目录与编号深度
+\setcounter{tocdepth}{2}   % 目录显示到 subsection
+\setcounter{secnumdepth}{3}% 编号到 subsubsection
+
+% 段落样式（按需）
+% \setlength{\parindent}{2em}
+% \setlength{\parskip}{0.25em}
+
+% 列表间距更紧凑一些
+\setlist[itemize]{topsep=2pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=2pt,itemsep=2pt,parsep=0pt}
+
+% 代码 listings 的统一风格
+\lstset{
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=6pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  tabsize=2,
+  captionpos=b
+}
+
+% 算法环境（algorithmic 关键词本地化可按需更改）
+% \renewcommand{\algorithmicrequire}{\textbf{输入:}}
+% \renewcommand{\algorithmicensure}{\textbf{输出:}}
+
+% TikZ 常用库（需要时解开）
+% \usetikzlibrary{arrows.meta,calc,positioning,decorations.pathreplacing}
+
+% cleveref（可选）：更智能的引用，需要在 hyperref 之后加载
+% \IfFileExists{cleveref.sty}{%
+%   \RequirePackage[nameinlink]{cleveref}
+%   % 中文标题映射（可按需配置）
+%   \crefname{theorem}{定理}{定理}
+%   \crefname{lemma}{引理}{引理}
+%   \crefname{proposition}{命题}{命题}
+%   \crefname{corollary}{推论}{推论}
+%   \crefname{definition}{定义}{定义}
+%   \crefname{example}{例}{例}
+%   \crefname{equation}{式}{式}
+% }{}
+
+% =========================================================
+%            中文正文用宋体；各级标题用黑体
+% =========================================================
+
+% 仅在 XeLaTeX/LuaLaTeX 下设置系统字体
+\IfFileExists{fontspec.sty}{%
+  % 正文字体：优先 SimSun（Windows），否则退到思源宋体
+  \IfFontExistsTF{SimSun}{%
+    \setCJKmainfont{SimSun}
+  }{%
+    \IfFontExistsTF{Noto Serif CJK SC}{%
+      \setCJKmainfont{Noto Serif CJK SC}
+    }{}
+  }%
+  % 黑体：优先 SimHei（Windows），否则退到思源黑体
+  \IfFontExistsTF{SimHei}{%
+    \setCJKfamilyfont{hei}{SimHei}
+  }{%
+    \IfFontExistsTF{Noto Sans CJK SC}{%
+      \setCJKfamilyfont{hei}{Noto Sans CJK SC}
+    }{}
+  }%
+}{}
+
+% 确保正文默认用宋体
+\AtBeginDocument{\songti}
+
+% 使用 ctex 的标题样式接口，把所有层级标题设为“黑体 + 粗体”
+\ctexset{
+  chapter/format       = {\heiti\bfseries\zihao{-2}},  % 章标题
+  section/format       = {\heiti\bfseries\Large},      % 节标题
+  subsection/format    = {\heiti\bfseries\large},      % 小节
+  subsubsection/format = {\heiti\bfseries\normalsize}, % 小小节
+  paragraph/format     = {\heiti\bfseries\normalsize}, % 段标题
+}
+
+% （可选）目录中的标题也用黑体
+\ctexset{
+  contentsname = {目录},
+  chapter/nameformat    = {\heiti\bfseries},
+  section/nameformat    = {\heiti\bfseries},
+  subsection/nameformat = {\heiti\bfseries},
+}

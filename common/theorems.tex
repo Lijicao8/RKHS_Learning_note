@@ -1,0 +1,31 @@
+% ========= common/theorems.tex =========
+% 统一的定理/引理/推论/定义/例子/备注等环境（中文名）
+
+% 公式与定理按 section 编号
+\numberwithin{equation}{section}
+
+% amsthm 风格：plain（黑体标题，斜体内容）
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+
+% definition 风格：直立体
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{example}[theorem]{例}
+\newtheorem{assumption}[theorem]{假设}
+\newtheorem{problem}[theorem]{问题}
+\newtheorem{exercise}[theorem]{练习}
+
+% remark 风格：小斜体标题、直立体内容
+\theoremstyle{remark}
+\newtheorem*{remark}{注}
+\newtheorem*{note}{说明}
+
+% 可选：编号到 subsection（按需开启）
+% \numberwithin{equation}{subsection}
+% \makeatletter
+% \@addtoreset{theorem}{subsection}
+% \makeatother

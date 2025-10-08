@@ -1,0 +1,73 @@
+% ========= common/macros.tex =========
+% 常用数学命令与记号（尽量不与 amsmath 等冲突）
+
+% 依赖的轻量宏包（只在未加载时加载）
+\providecommand{\RequirePackage}[1]{\usepackage{#1}}
+\RequirePackage{mathtools}  % \coloneqq, \DeclarePairedDelimiter
+\RequirePackage{bbm}        % \mathbbm{1} 指示函数
+
+% --- 数学集合与基础符号 ---
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\FF}{\mathbb{F}}
+
+% --- 线性代数常用 ---
+\DeclareMathOperator{\Tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Ker}{ker}
+\DeclareMathOperator{\Img}{im}
+
+% --- 优化与分析 ---
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\epi}{epi}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\intr}{int}
+\DeclareMathOperator{\ri}{ri}   % relative interior
+
+% --- 概率统计 ---
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\EE}{\mathbb{E}}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\newcommand{\ind}{\mathbbm{1}}    % 指示函数 \ind_{A}
+\newcommand{\given}{\,\middle|\,} % 条件竖线：\EE[X \given Y]
+
+% --- 配对括号（自动伸缩）---
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\paren}{\lparen}{\rparen}
+\DeclarePairedDelimiter{\brak}{\lbrack}{\rbrack}
+\DeclarePairedDelimiter{\set}{\lbrace}{\rbrace}
+\DeclarePairedDelimiter{\ang}{\langle}{\rangle}
+
+% 用法示例：\abs{x}, \norm{x}_2, \ang{x,y}, \set{ i : x_i>0 }
+
+% --- 常用运算符与记号 ---
+\newcommand{\defeq}{\coloneqq}     % 定义等号 :=
+\newcommand{\eqdef}{\eqqcolon}     % 反向定义等号 =:
+\newcommand{\ip}[2]{\left\langle #1,\,#2 \right\rangle}  % 内积
+\newcommand{\dd}{\,\mathrm{d}}     % 积分微分符号
+\newcommand{\Grad}{\nabla}         % 梯度
+\newcommand{\Hess}{\nabla^2}       % Hessian
+\newcommand{\T}{\mathsf{T}}        % 转置 ^\T
+\newcommand{\HT}{\mathsf{H}}       % 共轭转置 ^\HT
+
+% --- 取整/上取整 ---
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% --- 方便的范数下标写法 ---
+\newcommand{\onenorm}[1]{\left\lVert #1 \right\rVert_{1}}
+\newcommand{\twonorm}[1]{\left\lVert #1 \right\rVert_{2}}
+\newcommand{\infnorm}[1]{\left\lVert #1 \right\rVert_{\infty}}
