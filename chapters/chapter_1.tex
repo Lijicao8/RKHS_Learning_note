@@ -186,7 +186,7 @@ t & \mapsto K(x,t).
 \end{equation*}
 显然$K$是一个核函数，由 Moore-Aronszajn 定理\ref{thm:Moore-Aronszajn}可知 $K$诱导了一个以其为核的Hilbert空间$\mathcal{H_K}$，也可称为特征映射$\Phi$诱导的RKHS.一般而言，特征空间$\mathcal{H}$和特征映射诱导的RKHS$\mathcal{H_K}$是不同的，实际上，$\mathcal{H_K}$是$X$上某些函数的集合, 但$\mathcal{H}$未必是. 而下面的定理说明$\mathcal{H_K}$和$\mathcal{H}$的一个闭子空间是等距同构的.
 
-\begin{theorem}[特征映射诱导的RKHS等距嵌入特征空间]
+\begin{theorem}[特征映射诱导的RKHS等距嵌入特征空间]\label{thm:特征映射诱导的RKHS等距嵌入特征空间}
     给定非空集合$X$,实Hilbert空间$\mathcal{H}$以及映射$\Phi:X\to \mathcal{H}.$设$\mathcal{H}_{\Phi}$是$\mathcal{H}_{0}:=\operatorname{span}\{\Phi(x)|x\in X\}$在$\mathcal{H}$中的完备化空间.又设$K$是$\Phi$的核函数，那么，存在等距同构$T:\mathcal{H}_\Phi\to\mathcal{H_K}$,使得$T\Phi ( x) = K_x$, $\forall x\in X.$
 \end{theorem}
 
@@ -323,16 +323,17 @@ $$f(x) := \sum^{n}_{i=1} \frac{c_i}{\mu(B(x_i, \delta'))} \mathcal{X}_{B(x_i, \d
 
 根据以上叙述，我们可知Mercer核诱导的积分算子$T_K$是半正定的紧、自伴算子，因而可以进行以下的谱分解：
 \begin{lemma}[SejdinovicGretton2012RKHSNotes]\label{lemma:Sejdinovic}
-设 $\mathcal{F}$ 为一Hilbert空间，$T:\mathcal{F}\to\mathcal{F}$ 为半正定的紧、自伴算子.
-则存在一个至多可数的规范正交基$\{\phi_j\}_{j\in J}\subset\mathcal{F}$ 与一列实数
+设 $\mathcal{H}$ 为一Hilbert空间，$T:\mathcal{H}\to\mathcal{H}$ 为半正定的紧、自伴算子.
+则存在一个至多可数的规范正交基$\{\phi_j\}_{j\in J}\subset\mathcal{H}$ 与一列实数
 $\{\lambda_j\}_{j\in J}$，满足
 \[
 \lambda_1\ge \lambda_2\ge \cdots \geq  0,\qquad \lambda_j\to 0,
 \]
-使得对任意 $f\in\mathcal{F}$，
+使得对任意 $f\in\mathcal{H}$，
 \[
-Tf=\sum_{j\in J}\lambda_j\,\langle f,\phi_j\rangle_{\mathcal{F}}\,\phi_j .
+Tf=\sum_{j\in J}\lambda_j\,\langle f,\phi_j\rangle_{\mathcal{H}}\,\phi_j ,
 \]
+其中等式在内积意义下成立.
 \end{lemma}
 
 
@@ -342,7 +343,11 @@ Tf=\sum_{j\in J}\lambda_j\,\langle f,\phi_j\rangle_{\mathcal{F}}\,\phi_j .
 $$T_K\phi_j=\lambda_j\phi_j,\quad j\in J,$$
 其中 $J$ 是有限集或 $J=\mathbb{N}_+,\lambda_1\geq\lambda_2\geq\cdots,$且当$J=\mathbb{N}_+$时,有 $\lambda_j\to0~(j\to\infty).$
 
-下面，我们将证明著名的Mercer定理，为此，我们先给出以下几个引理.
+若$J=\{1,\dots,n\}$，则对任意$j\in J$有
+\begin{equation*}
+    \langle K_x,\phi_j\rangle_{L^2(X,\mu)} = \lambda_j\phi_j(x) = \langle\sum_{j\in J}\lambda_j\phi_j(x)\phi_j,\phi_j\rangle_{L^2(X,\mu)},
+\end{equation*}
+即对于几乎处处的$(x,y)\in X\times X$有$K(x,y)=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y)$.结合$K,\phi_j$的连续性，有$K(x,y)=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y)$对任意$(x,y)\in X\times X$成立.对于$J$是可数集的情形，我们将说明当$\operatorname{supp}\mu = X$时，该求和一致收敛.这就是著名的Mercer定理.为证明此定理，我们先给出以下几个引理.
 \begin{lemma}[$L^2$意义下相等的等价性]\label{lemma: L2中等价性}
     设 $(X,\mathcal{A},\mu)$ 为测度空间，$f,g\in L^2(X,\mu)$.则以下两条等价：
 
@@ -429,7 +434,7 @@ f(x_0)-S_m(x_0)\ge \epsilon_0.
 $$K_{n}(x,y) := \sum_{j=1}^{n} \lambda_{j} \phi_{j}(x) \phi_{j}(y).$$
 首先我们证明: 对任意$ x,y \in X$, 有
 $$
-K_{n}(x,x) \leq K(x,x)
+K_{n}(x,x) \leq K(x,x).
 $$
 
 事实上，对任意$f\in L^2(X,\mu),$在$L^2$意义下有
@@ -445,15 +450,15 @@ $$
 \begin{equation*}
     \int_X\int_X[K(x,y)-K_n(x,y)]f(x)f(y)d\mu(x)d\mu(y)\geq0.
 \end{equation*}
-根据引理\eqref{lemma: phi_j连续性}可知$K-K_n$是一个连续的对称函数.故由定理\ref{thm:基于Mercer核的积分算子的半正定性}可知$K-K_n$是核函数.由定理\ref{thm:对称半正定K(xx)>0}有，对任意$x\in X$，有$K(x,x)-K_n(x,x)\geq 0$.
+根据引理\ref{lemma: phi_j连续性}可知$K-K_n$是一个连续的对称函数.故由定理\ref{thm:基于Mercer核的积分算子的半正定性}可知$K-K_n$是核函数.由定理\ref{thm:对称半正定K(xx)>0}有，对任意$x\in X$，有$K(x,x)-K_n(x,x)\geq 0$.
 
 
 然后我们证明函数项级数$\sum_{j\in J} \lambda_j \phi_j(x)\phi_j(y)$逐点绝对收敛. 
 
-因为$K$是紧集$X$上的连续函数因此有界，记$M = \sup_{x\in X} K(x,x)$. 则对任意的$n\in \mathbb{N}_+\cap J$，以及$x,y\in X$，有
+因为$K$是紧集$X$上的连续函数因此有界，记$C_K = \sup_{x\in X} K(x,x)$. 则对任意的$n\in J$，以及$x,y\in X$，有
 \begin{align}\label{eq:K_n的有界性}
     \sum_{j=1}^n |\lambda_j\phi_j(x)\phi_j(y)|&\leq \left(\sum_{j=1}^n\lambda_j|\phi_j(x)|^2\right)^{1/2}\left(\sum_{j=1}^n\lambda_j|\phi_j(y)|^2\right)^{1/2} \nonumber\\
-    &\leq \sqrt{K(x,x)K(y,y)}\leq M .
+    &\leq \sqrt{K(x,x)K(y,y)}\leq C_K .
 \end{align}
 因此$\sum_{j\in J} \lambda_j \phi_j(x)\phi_j(y)$逐点绝对收敛.
 逐点绝对收敛一定逐点收敛，记
@@ -461,21 +466,21 @@ $$\widetilde{K}(x,y):=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y)=\lim_{n\to\infty}
 
 接下来，我们证明对任意$x\in X$，以及几乎处处的$y\in X$，有$K(x,y)= \widetilde{K}(x,y).$
 
-事实上，对任意$\phi_j,n\in\mathbb{N}_+$有
+事实上，任给$x\in X$，对任意$n,j\in J$且$n\geq j$有
 \begin{align*}
-    \langle K_x,\phi_j\rangle_{L^2 } = \lambda_j \phi_j(x) = \int_{X}K_n(x,y)\phi_j(y)\mathrm{d}\mu (y).
+    \langle K_x,\phi_j\rangle_{L^2(X,\mu) } = \lambda_j \phi_j(x) = \int_{X}K_n(x,y)\phi_j(y)\mathrm{d}\mu (y).
 \end{align*}
 又根据式\eqref{eq:K_n的有界性}有$|K_n(x,y)|\leq \sqrt{K(x,x)K(y,y)}.$，因此，对任意给定的$x\in X$，有
 \begin{equation*}
-    \int_{X} \sqrt{K(x,x)K(y,y)}\cdot |f(y)|\mathrm{d}\mu(y)\leq M \|f\|_1\leq M\|f\|_2 \mu(X)<\infty.
+    \int_{X} \sqrt{K(x,x)K(y,y)}\cdot |f(y)|\mathrm{d}\mu(y)\leq C_K \|f\|_1\leq C_K\|f\|_2 \mu(X)<\infty.
 \end{equation*}
 故由Lebesgue控制收敛定理可知，
 \begin{equation*}
-    \langle K_x,\phi_j\rangle_{L^2} = \lim_{n\to\infty}\int_{X}K_n(x,y)\phi_j(y)\mathrm{d}\mu (y) = \int_{X}\widetilde{K}(x,y)\phi_j(y)\mathrm{d}\mu(y) = \langle \widetilde{K}_x,\phi_j\rangle_{L^2}
+    \langle K_x,\phi_j\rangle_{L^2} = \lim_{n\to\infty}\int_{X}K_n(x,y)\phi_j(y)\mathrm{d}\mu (y) = \int_{X}\widetilde{K}(x,y)\phi_j(y)\mathrm{d}\mu(y) = \langle \widetilde{K}_x,\phi_j\rangle_{L^2(X,\mu)}
 \end{equation*}
-由内积的连续性，对任意$f\in L^2$有
+由内积的连续性，对任意$f\in L^2(X,\mu)$有
 \begin{equation*}
-    \langle K_x,f\rangle_{L^2}=\langle \widetilde{K}_x,f\rangle_{L^2}
+    \langle K_x,f\rangle_{L^2(X,\mu)}=\langle \widetilde{K}_x,f\rangle_{L^2(X,\mu)}
 \end{equation*}
 因此，对任意$x\in X$，以及几乎处处的$y\in X$，有$K(x,y)= \widetilde{K}(x,y).$
 
@@ -486,9 +491,9 @@ $$\widetilde{K}(x,y):=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y)=\lim_{n\to\infty}
 因为
 \begin{align*}
     \sup_{y\in Y} |\sum_{k=m}^n \lambda_k\phi_k(x)\phi_k(y)|&\leq \sup_{y\in Y}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\left( \sum_{k=m}^n\lambda_k|\phi_k(y)|^2\right)^{1/2}\\
-    &\leq \sqrt M \left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\to 0.
+    &\leq \sqrt{C_K} \left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\to 0.
 \end{align*}
-因此，对任意给定的$x\in X$，$K_n(x,y)$对$y\in Y$一致收敛于$\widetilde{K}(x,y).$故对任意给定的$x$，$\widetilde{K}(x,y)$连续，所以对任意的$(x,y)\in X\times X$，有$K(x,y)=\widetilde{K}(x,y).$
+因此，由Cauchy收敛准则，有对任意给定的$x\in X$，$K_n(x,y)$对$y\in Y$一致收敛于$\widetilde{K}(x,y).$故对任意给定的$x$，$\widetilde{K}(x,y)$连续，所以对任意的$(x,y)\in X\times X$，有$K(x,y)=\widetilde{K}(x,y).$
 
 此外，$\{K_n(x,x)\}$是单调不减的连续非负函数列，并且逐点收敛到$\widetilde{K}(x,x)=K(x,x)$.由Dini定理\ref{lemma:Dini}可知$K_n(x,x)$在$X$上一致收敛到$K(x,x).$即
 \begin{equation*}
@@ -497,13 +502,9 @@ $$\widetilde{K}(x,y):=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y)=\lim_{n\to\infty}
 因此，有
 \begin{align*}
     \sup_{x\in X}\sup_{y\in Y} |\sum_{k=m}^n \lambda_k\phi_k(x)\phi_k(y)|&\leq \sup_{x\in X}\sup_{y\in Y}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\left( \sum_{k=m}^n\lambda_k|\phi_k(y)|^2\right)^{1/2}\\
-    &\leq \sqrt M \sup_{x\in X}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\to 0.
+    &\leq \sqrt C_K \sup_{x\in X}\left( \sum_{k=m}^n\lambda_k|\phi_k(x)|^2\right)^{1/2}\to 0.
 \end{align*}
 \end{proof}
-\noindent\textbf{注：}Mercer定理给出了核函数的另一种特征映射：
-\begin{equation*}
-    K(x,y) =\langle \sum_{j\in J}\sqrt{\lambda_j}\phi_j(x),\sum_{j\in J}\sqrt{\lambda_j}\phi_j(y)\rangle.
-\end{equation*}
 
 
 
@@ -547,10 +548,26 @@ k\,\lambda_k \;\leq\;\sum_{j=1}^k \lambda_j
 
 
 \subsection{$\mathcal{H_K}$与$L^2(X,\mu)$的关系}
-由于$0\leq \lambda_j\leq \lambda_1~(\forall j\in J)$
-，记$J_+:=\{j\in J:\lambda_j>0\}$，定义
+记$J_+:=\{j\in J:\lambda_j>0\}$，由Mercer定理\ref{thm:mercer}可知$K(x,y)=\sum_{j\in J}\lambda_j\phi_j(x)\phi_j(y) = \langle \Psi(x),\Psi(y)\rangle_{\ell^2(J_+)}$
+其中特征映射$\Psi(x) := (\psi_j(x))_{j\in J_+},\psi_j:=\sqrt{\lambda_j}\phi_j$.由$\|\Phi(x)\|_{\ell^2(J_+)}\leq \sqrt{C_K}<\infty,$易知$\Psi(x)\in \ell^2(J_+),$其中$C_K:=\sup_{x\in X}K(x,x).$
+
+定义$L^2(X,\mu)$的子空间
 \begin{equation*}
-    \mathcal{H}_{K,\mu}:=\{f=\sum_{j\in J^+}\sqrt{\lambda_j}c_j\phi_j:\{c_j\}\in\ell^2(J_+)\},
+    L^2(X,\mu)_+:=\{f\in L^2(X,\mu):\langle f,\phi_j\rangle = 0,\forall j\in J\backslash J_+\}.
+\end{equation*}一方面，存在$\ell^2(J_+)$到$L^2(X,\mu)_+$的等距同构$T_1$，使得:
+\begin{equation*}
+    T_1\Psi(x) = \sum_{j\in J_+}\psi_j(x)\phi_j.
+\end{equation*}
+另一方面，有
+\begin{equation*}
+    K_x = \sum_{j\in J}\psi_j(x)\psi_j,
+\end{equation*}
+根据定理\ref{thm:特征映射诱导的RKHS等距嵌入特征空间}有$\operatorname{span}\{K_x\}$与$\operatorname{span}\{\Psi(x)\}$等距同构，而$\operatorname{span}\{\Psi(x)\}$与$\operatorname{span}\{T_1\Psi(x)\}$等距同构，因此存在$T$使得$\operatorname{span}\{K_x\}$与$\operatorname{span}\{T_1\Psi(x)=\sum_{j\in J_+}\psi_j(x)\phi_j\}$等距同构，下面我们证明$T_K^{1/2}$就是这个映射，并且$\operatorname{span}\{\sum_{j\in J_+}\psi_j(x)\phi_j\}$完备化后的空间就是$L_2(X,\mu)_+.$
+
+
+定义
+\begin{equation*}
+    \mathcal{H}_{K,\mu}:=\{f=\sum_{j\in J^+}c_j\psi_j:\{c_j\}\in\ell^2(J_+)\},
 \end{equation*}
 其中求和是在$L^2$意义下的，由于
 \begin{equation*}
@@ -562,27 +579,20 @@ k\,\lambda_k \;\leq\;\sum_{j=1}^k \lambda_j
 := \sum_{j\in J_+} a_j\,b_j,
 \qquad
 \forall\, 
-f := \sum_{j\in J} \sqrt{\lambda_j}\, a_j\, \phi_j,\quad
-g := \sum_{j\in J} \sqrt{\lambda_j}\, b_j\, \phi_j \in \mathcal{H}_{K,\mu}.
+f := \sum_{j\in J}  a_j\, \psi_j,\quad
+g := \sum_{j\in J}  b_j\, \psi_j \in \mathcal{H}_{K,\mu}.
 \end{equation}
-容易验证它是一个内积，下证明完备性.任取$\mathcal{H}_{K,\mu}$的Cauchy列$\{f_n:=\sum_{j\in J_+}\sqrt{\lambda_j}c^{(n)}_j\phi_j\}$，则有
+容易验证它是一个内积，下证明完备性.任取$\mathcal{H}_{K,\mu}$的Cauchy列$\{f_n:=\sum_{j\in J_+}c^{(n)}_j\psi_j\}$，则有
 \begin{equation*}
     \|f_m - f_n\|_{\mathcal{H}_{K,\mu}} = \|c^{(m)}-c^{(n)}\|_{\ell^2(J_+)}\to 0.
 \end{equation*}
-由$\ell^2(J_+)$的完备性可知$c^{(n)}\to c\in\ell^2(J_+).$令$f_0:=\sum_{j\in J^+}c_j\phi_j\in\mathcal{H}_{K,\mu}$，并且有$f_n\to f_0~(\mathcal{H}_{K,\mu})$，因此$\left(\mathcal{H}_{K,\mu},\langle\cdot,\cdot\rangle_{\mathcal{H}_{K,\mu}}\right)$完备.
+由$\ell^2(J_+)$的完备性可知$c^{(n)}\to c\in\ell^2(J_+).$令$f_0:=\sum_{j\in J^+}c_j\psi_j\in\mathcal{H}_{K,\mu}$，并且有$f_n\to f_0~(\mathcal{H}_{K,\mu})$，因此$\left(\mathcal{H}_{K,\mu},\langle\cdot,\cdot\rangle_{\mathcal{H}_{K,\mu}}\right)$完备，并且$\{\psi_j\}_{j\in J_+}$是其一组标准正交基.
 
-定义$L^2(X,\mu)$的子空间
-\begin{equation*}
-    L^2(X,\mu)_+:=\{f\in L^2(X,\mu):\langle f,\phi_j\rangle = 0,\forall j\in J\backslash J_+\},
-\end{equation*}
-事实上，还有
-\begin{equation*}
-    L^2(X,\mu) = L^2(X,\mu)_+ \oplus \operatorname{Ker}(T_K).
-\end{equation*}
+
 
 满足\(T_k = T_k^{1/2}\circ T_k^{1/2}\)的算子 \(T_k^{1/2}\)定义为
 \begin{equation}\label{eq:算子T_k1/2}
-    T_K^{1/2}f:=\sum_{j\in J_+}\sqrt{\lambda_j}a_j\phi_j,\qquad \forall f=\sum_{j\in J}a_j\phi_j\in L^2(X,\mu).
+    T_K^{1/2}f:=\sum_{j\in J_+}\sqrt{\lambda_j}a_j\phi_j=\sum_{j\in J_+}a_j\psi_j,\qquad \forall f=\sum_{j\in J}a_j\phi_j\in L^2(X,\mu).
 \end{equation}
 事实上，容易得到，对任意$f\in L^2(X,\mu)_+$，有$T_K^{1/2}f\in \mathcal{H}_{K,\mu}$，并且满足以下等式：
 \begin{equation}\label{eq:等距同构}
@@ -604,16 +614,16 @@ T_{K}^{1/2}:~L^{2}(X,\mu)_{+}\longrightarrow \mathcal{H}_{K,\mu}
 \end{theorem}
 
 \begin{proof}
-    对任意$f = \sum_{j\in J^+}\sqrt{\lambda_j}a_j\phi_j\in \mathcal{H}_{K,\mu}$，$\{a_j\}\in \ell^2(J_+)$.因此对任意$x\in X$有
+    对任意$f = \sum_{j\in J^+}a_j\psi_j\in \mathcal{H}_{K,\mu}$，$\{a_j\}\in \ell^2(J_+)$.因此对任意$x\in X$有
     \begin{align*}
-        \sup_{x\in X} \left|\sum_{k=m}^n \sqrt{\lambda_k}a_k\phi_k(x)\right|&\leq \sup_{x\in X}\left(\sum_{k=m}^na_k^2\right)^{1/2}\left(\sum_{k=m}^n\lambda_k\phi^2_k(x)\right)^{1/2}\\
+        \sup_{x\in X} \left|\sum_{k=m}^n a_k\psi_k(x)\right|&\leq \sup_{x\in X}\left(\sum_{k=m}^na_k^2\right)^{1/2}\left(\sum_{k=m}^n\lambda_k\phi^2_k(x)\right)^{1/2}\\
         &\leq C_K\left(\sum_{k=m}^na_k^2\right)^{1/2}\to 0,
     \end{align*}
 其中$C_K = \sup_{x\in X}K(x,x)$.由柯西收敛准则，有上述级数在$X$上一致收敛，故$f$连续，即$\mathcal{H}_{K,\mu}\subset C(X).$
 
-又因为对任意的$x\in X$,有$K_x = \sum_{j\in J}\sqrt{\lambda_j}c_j\phi_j$，$c_j:=\sqrt{\lambda_j}\phi_j(x)$，因此有
+又因为对任意的$x\in X$,有$K_x = \sum_{j\in J}c_j\psi_j$，$c_j:=\psi_j(x)$，因此有
 \begin{equation*}
-    \sum_{j\in J_+}c_j^2 = \sum_{j\in J}c_j^2 = \sum_{j\in J}\lambda_j\phi_j^2(x) = K(x,x)<\infty,
+    \sum_{j\in J_+}c_j^2 = \langle\Psi(x),\Psi(x)\rangle_{\ell^2(J_+)} = K(x,x)<\infty,
 \end{equation*}
 即$K_x\in \mathcal{H}_{K,\mu}.$此外，由式\eqref{eq: H_Kmu 内积}有
 \begin{equation*}
@@ -623,7 +633,7 @@ T_{K}^{1/2}:~L^{2}(X,\mu)_{+}\longrightarrow \mathcal{H}_{K,\mu}
 
 最后证明等距同构，根据式\eqref{eq:等距同构}，只需证$T_K^{1/2}$是满射即可.
 
-对任意$f = \sum_{j\in J^+}\sqrt{\lambda_j}a_j\phi_j\in \mathcal{H}_{K,\mu}$，令$$g:=\sum_{j\in J^+}a_j\phi_j\in L^2(X,\mu)_+,$$即有$T_K^{1/2}g = f$.因此定理得证.
+对任意$f = \sum_{j\in J^+}a_j\psi_j\in \mathcal{H}_{K,\mu}$，令$$g:=\sum_{j\in J^+}a_j\phi_j\in L^2(X,\mu)_+,$$即有$T_K^{1/2}g = f$.因此定理得证.
 \end{proof}
 根据定理\ref{thm:Mercer-isometry}，我们有
 \[
@@ -633,6 +643,9 @@ T_{K}^{1/2}:~L^{2}(X,\mu)_{+}\longrightarrow \mathcal{H}_{K,\mu}
 值得注意的是，$H_{K,\mu}$ 和 $T_K^{1/2}\!\left(L^{2}(X,\mu)_{+}\right)$ 的定义都依赖于
 $X$ 上的 Borel 测度 $\mu$.然而，上述结果表明：实际上它们与 $\mu$ 无关，
 而完全由正定核 $K$ 决定——这正是因为空间 $\mathcal{H}_K$ 完全由 $K$ 唯一定义.
+
+
+
 
 
 
